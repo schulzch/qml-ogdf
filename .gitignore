@@ -1,0 +1,6 @@
+.DS_Store
+[Tt]humbs.db
+
+*.user
+
+build/
