@@ -27,7 +27,7 @@ It's worth mentioning that `Unix Makefiles` can be replaced with your favorite C
 
 ## Quick Start
 
-Once build, you should start by playing with the example - find out what algorithms are available and learn how to use them!
+Once build, you can start the `ogdf-demo` - find out what algorithms are available and learn how to use them!
 
 To use the plug-in in your own project, you need to compile an `OGDF` directory and copy it to your application's working directory as follows:
 

@@ -1,11 +1,12 @@
 import QtQuick 2.0
 import OGDF 1.0
 
-Rectangle {
+Item {
     id: container
-
-    width: 800
-    height: 600
+    x: childrenRect.x
+    y: childrenRect.y
+    width: childrenRect.width
+    height: childrenRect.height
     Graph {
         id: graph
     }
@@ -36,9 +37,9 @@ Rectangle {
         onClicked: {
             graph.clear();
             graph.randomSimpleGraph(10, 20);
-           // var left = graph.addNode(10, 10, 50, 50);
-           // var bottom = graph.addNode(10, 10, 50, 50);
-           // graph.addEdge(left, bottom);
+            // var left = graph.addNode(10, 10, 50, 50);
+            // var bottom = graph.addNode(10, 10, 50, 50);
+            // graph.addEdge(left, bottom);
             //console.log("Adding nodes " + left + " and " + bottom + " along with an edge");
             graph.fmmmLayout();
         }
