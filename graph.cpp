@@ -16,6 +16,16 @@
 #include "ogdf/energybased/FMMMLayout.h"
 #include <QDebug>
 
+//m_attributes.x(v) = options.value("x", 0.0f).toDouble();
+//m_attributes.y(v) = options.value("y", 0.0f).toDouble();
+//m_attributes.width(v) = options.value("width", 0.0f).toDouble();
+//m_attributes.height(v) = options.value("height", 0.0f).toDouble();
+//m_attributes.shapeNode(v) = ogdf::GraphAttributes::rectangle;
+
+//ogdf::DPolyline &p = m_attributes.bends(e);
+//p.pushBack(ogdf::DPoint(10,20*e->index()));
+//p.pushBack(ogdf::DPoint(20*e->index(),10));
+
 Graph::Graph(QObject *parent)
     : QObject(parent), m_graph(),
       m_attributes(m_graph, ogdf::GraphAttributes::nodeGraphics |
@@ -39,20 +49,66 @@ EdgeModel *Graph::edges()
     return &m_edges;
 }
 
-void Graph::randomSimpleGraph(int nodeCount, int edgeCount)
+void Graph::randomGraph(int n, int m)
 {
-    ogdf::randomSimpleGraph(m_graph, nodeCount, edgeCount);
+    return ogdf::randomGraph(m_graph, m, n);
 }
 
-int Graph::addNode(double x, double y, double width, double height)
+bool Graph::randomSimpleGraph(int m, int n)
 {
-    ogdf::node v = m_graph.newNode();
-    m_attributes.x(v) = x;
-    m_attributes.y(v) = y;
-    m_attributes.width(v) = width;
-    m_attributes.height(v) = height;
-    m_attributes.shapeNode(v) = ogdf::GraphAttributes::rectangle;
-    return v->index();
+    return ogdf::randomSimpleGraph(m_graph, m, n);
+}
+
+void Graph::randomBiconnectedGraph(int n, int m)
+{
+    return ogdf::randomBiconnectedGraph(m_graph, m, n);
+}
+
+void Graph::randomTriconnectedGraph(int n, double p1, double p2)
+{
+    return ogdf::randomTriconnectedGraph(m_graph, n, p1, p2);
+}
+
+void Graph::randomTree(int n)
+{
+    return ogdf::randomTree(m_graph, n);
+}
+
+void Graph::randomTree(int n, int maxDeg, int maxWidth)
+{
+    return ogdf::randomTree(m_graph, n, maxDeg, maxWidth);
+}
+
+void Graph::randomHierarchy(int n, int m, bool planar,
+                            bool singleSource, bool longEdges)
+{
+    return ogdf::randomHierarchy(m_graph, n, m, planar,
+                                 singleSource, longEdges);
+}
+
+void Graph::randomDiGraph(int n, double p)
+{
+    return ogdf::randomDiGraph(m_graph, n, p);
+}
+
+int Graph::addNode()
+{
+    return m_graph.newNode()->index();
+}
+
+void Graph::eachNode(QJSValue callback)
+{
+    if (callback.isCallable()) {
+        QJSValueList arguments;
+        arguments << QJSValue();
+        ogdf::node v;
+        forall_nodes (v, m_graph) {
+            arguments[0] = v->index();
+            callback.call(arguments);
+        }
+    } else {
+        qCritical() << "Expected function(index) as first argument";
+    }
 }
 
 void Graph::removeNode(int index)
@@ -91,14 +147,25 @@ int Graph::addEdge(int sourceNode, int targetNode)
     }
     if (found1 && found2) {
         ogdf::edge e = m_graph.newEdge(v1, v2);
-        //ogdf::DPolyline &p = m_attributes.bends(e);
-        //p.pushBack(ogdf::DPoint(10,20*e->index()));
-        //p.pushBack(ogdf::DPoint(20*e->index(),10));
         return e->index();
     } else {
         return -1;
     }
+}
 
+void Graph::eachEdge(QJSValue callback)
+{
+    if (callback.isCallable()) {
+        QJSValueList arguments;
+        arguments << QJSValue();
+        ogdf::edge e;
+        forall_edges (e, m_graph) {
+            arguments[0] = e->index();
+            callback.call(arguments);
+        }
+    } else {
+        qCritical() << "Expected function(index) as first argument";
+    }
 }
 
 void Graph::removeEdge(int index)

@@ -15,6 +15,7 @@
 #define GRAPH_H
 
 #include <QObject>
+#include <QJSValue>
 #include "nodemodel.h"
 #include "edgemodel.h"
 #include "ogdf/basic/Graph.h"
@@ -35,12 +36,22 @@ public:
     NodeModel *nodes();
     EdgeModel *edges();
 
-    Q_INVOKABLE void randomSimpleGraph(int nodeCount, int edgeCount);
+    Q_INVOKABLE void randomGraph(int n, int m);
+    Q_INVOKABLE bool randomSimpleGraph(int m, int n);
+    Q_INVOKABLE void randomBiconnectedGraph(int n, int m);
+    Q_INVOKABLE void randomTriconnectedGraph(int n, double p1, double p2);
+    Q_INVOKABLE void randomTree(int n);
+    Q_INVOKABLE void randomTree(int n, int maxDeg, int maxWidth);
+    Q_INVOKABLE void randomHierarchy(int n, int m, bool planar,
+                                     bool singleSource, bool longEdges);
+    Q_INVOKABLE void randomDiGraph(int n, double p);
 
-    Q_INVOKABLE int addNode(double x, double y, double width, double height);
+    Q_INVOKABLE int addNode();
+    Q_INVOKABLE void eachNode(QJSValue callback);
     Q_INVOKABLE void removeNode(int index);
 
     Q_INVOKABLE int addEdge(int sourceNode, int targetNode);
+    Q_INVOKABLE void eachEdge(QJSValue callback);
     Q_INVOKABLE void removeEdge(int index);
 
     Q_INVOKABLE void clear();
