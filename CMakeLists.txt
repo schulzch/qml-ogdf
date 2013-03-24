@@ -4,7 +4,7 @@
 #
 project(QML-OGDF)
 
-# Require CMake 2.8.0+.
+# Require CMake 2.8.10+ for Qt5 support.
 cmake_minimum_required(VERSION 2.8.10)
 
 # Check for polluted source tree.
@@ -37,8 +37,10 @@ file(GLOB_RECURSE OGDF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "ogdf/*.cpp" "ogdf/*.h")
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "*.cpp" "*.h" "qmldir")
+file(GLOB HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+     "*.h")
 include_directories("ogdf")
-qt5_wrap_cpp(MOC_SOURCES ${SOURCES})
+qt5_wrap_cpp(MOC_SOURCES ${HEADERS})
 add_library(ogdfplugin SHARED ${SOURCES} ${MOC_SOURCES} ${OGDF_SOURCES})
 if(WIN32)
     target_link_libraries(ogdfplugin "Psapi.lib")

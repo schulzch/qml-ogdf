@@ -12,6 +12,7 @@
  * details: http://www.gnu.org/copyleft/lesser
  */
 #include "edgemodel.h"
+#include <QPointF>
 
 EdgeModel::EdgeModel(ogdf::GraphAttributes *attributes, QObject *parent)
     : QAbstractListModel(parent), ogdf::GraphObserver(&attributes->constGraph()),

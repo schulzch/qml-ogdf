@@ -31,11 +31,11 @@ Once build, you can start `ogdf-demo` to find out what algorithms are available 
 
 To use the plug-in in your own project, you need to compile an `OGDF` directory and copy it to your application's working directory as follows:
 
-    OGDF/              -- plug-in directory
-      ogdfplugin.so    -- compiled plug-in (Linux only)
-      ogdfplugin.dylib -- compiled plug-in (OS X only)
-      ogdfplugin.dll   -- compiled plug-in (Windows only)
-      qmldir           -- module definition file
+    OGDF/                 -- plug-in directory
+      libogdfplugin.so    -- compiled plug-in (Linux only)
+      libogdfplugin.dylib -- compiled plug-in (OS X only)
+      ogdfplugin.dll      -- compiled plug-in (Windows only)
+      qmldir              -- module definition file
 
 ## License
 
