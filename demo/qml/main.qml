@@ -18,20 +18,21 @@ Rectangle {
     width: 800
     height: 600
     color: "white"
-    Header {
-        id: header
+    GraphTools {
+        id: graphTools
+        anchors.top: parent.top
         anchors.left: parent.left
-        anchors.right: parent.right
-        height: 40
+        anchors.bottom: parent.bottom
+        width: 150
     }
     CanvasView {
         id: canvasView
-        anchors.left: parent.left
-        anchors.top: header.bottom
-        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.left: graphTools.right
         anchors.bottom: parent.bottom
-        GraphView {
-            id: graphView
+        anchors.right: parent.right
+        GraphScene {
+            id: graphScene
         }
     }
 }

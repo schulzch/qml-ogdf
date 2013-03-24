@@ -50,7 +50,10 @@ Item {
         onClicked: {
             graph.clear();
             graph.randomSimpleGraph(10, 20);
-            // var left = graph.addNode(10, 10, 50, 50);
+            graph.eachNode(function(index) {
+                console.log("test" + index);
+            });
+            var left = graph.addNode();
             // var bottom = graph.addNode(10, 10, 50, 50);
             // graph.addEdge(left, bottom);
             //console.log("Adding nodes " + left + " and " + bottom + " along with an edge");
