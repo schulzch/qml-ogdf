@@ -22,23 +22,25 @@ ShaderEffect {
     fragmentShader:
         "uniform highp vec2 resolution;" +
         "uniform highp float time;" +
-        "const highp float size = 50.0;" +
-        "const int num = 84;" +
+        "const highp float TWOPI = 6.28318530717958647693;" +
+        "const int num = 200;" +
         "void main() {" +
         "  highp float sum = 0.0;" +
+        "  highp float size = resolution.x / 800.0;" +
         "  for (int i = 0; i < num; i++) {" +
         "    highp vec2 position = resolution / 2.0;" +
-        "    position.x += sin(time / 3.0 + 1.0 * float(i)) * resolution.x * 0.25;" +
-        "    position.y += tan(time / 5.0 + (2.0 + sin(time) * 0.01) * float(i)) * resolution.y * 0.25;" +
+        "    highp float t = float(i) / float(num) * TWOPI + time;" +
+        "    position.x += sin(9.0 * t) * resolution.x * 0.35;" +
+        "    position.y += sin(7.0 * t) * resolution.y * 0.48;" +
         "    sum += size / length(gl_FragCoord.xy - position);" +
         "  }" +
-        "  gl_FragColor = vec4(vec3(sum / float(num)), 1.0);" +
+        "  gl_FragColor = vec4(0, sum * 0.5, sum, 1.0);" +
         "}"
     NumberAnimation on time {
         loops: Animation.Infinite;
-        from: 0;
-        to: 1.0;
-        duration: 2000
+        from: 0.0
+        to: 2.0 * Math.PI
+        duration: 80000
     }
     Text {
         id: ogdfLabel
