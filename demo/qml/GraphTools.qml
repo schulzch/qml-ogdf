@@ -16,23 +16,26 @@ import QtQuick 2.0
 ShaderEffect {
     id: background
     property real time: 1.0
-    property point resolution: Qt.point(width, height)
+    property point location: Qt.point(x, y)
+    property point size: Qt.point(width, height)
+    property alias model: menuView.model
     width: 200
     height: 40
     fragmentShader:
-        "uniform highp vec2 resolution;" +
+        "uniform highp vec2 location;" +
+        "uniform highp vec2 size;" +
         "uniform highp float time;" +
         "const highp float TWOPI = 6.28318530717958647693;" +
         "const int num = 200;" +
         "void main() {" +
         "  highp float sum = 0.0;" +
-        "  highp float size = resolution.x / 800.0;" +
+        "  highp float s = size.x / 800.0;" +
         "  for (int i = 0; i < num; i++) {" +
-        "    highp vec2 position = resolution / 2.0;" +
+        "    highp vec2 position = size / 2.0;" +
         "    highp float t = float(i) / float(num) * TWOPI + time;" +
-        "    position.x += sin(9.0 * t) * resolution.x * 0.35;" +
-        "    position.y += sin(7.0 * t) * resolution.y * 0.48;" +
-        "    sum += size / length(gl_FragCoord.xy - position);" +
+        "    position.x += sin(9.0 * t) * size.x * 0.35;" +
+        "    position.y += sin(7.0 * t) * size.y * 0.48;" +
+        "    sum += s / length(gl_FragCoord.xy - position - location);" +
         "  }" +
         "  gl_FragColor = vec4(0, sum * 0.5, sum, 1.0);" +
         "}"
@@ -60,9 +63,9 @@ ShaderEffect {
         anchors.right: ogdfLabel.right
         anchors.top: ogdfLabel.bottom
         font.family: "Arial,Verdana,sans-serif"
+        font.bold: true
         font.pixelSize: 15
         font.letterSpacing: 5
-        font.bold: true
         color: "#ffffff"
         text: "for QML"
     }
@@ -73,37 +76,39 @@ ShaderEffect {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         height: 14
-        model: [qsTr("NYI:"), qsTr("Some"), qsTr("Useful"), qsTr("Menu-Items")]
         currentIndex: -1
         boundsBehavior: Flickable.StopAtBounds
         spacing: 6
-        delegate: Rectangle {
-            width: childrenRect.width
-            height: childrenRect.height
-            radius: 4
-            color: menuView.currentIndex == index ? "#cc666666" : "#cc333333"
-            Text {
-                width: paintedWidth
-                font.family: "Arial,Verdana,sans-serif"
-                font.pixelSize: 16
-                color: "white"
-                text: modelData
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        console.log("NYI: selected " + index);
-                    }
-                    onEntered: {
-                        menuView.focus = true;
-                        menuView.currentIndex = index;
-                    }
-                    onExited: {
-                        menuView.currentIndex = -1;
-                    }
+        delegate: Text {
+            x: 6
+            width: menuView.width - 12
+            font.family: "Arial,Verdana,sans-serif"
+            font.bold: true
+            font.pixelSize: 12
+            color: menuView.currentIndex == index ? "#ffffff" : "#66666666"
+            text: model.caption
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    menuView.model.execute(index);
+                }
+                onEntered: {
+                    menuView.focus = true;
+                    menuView.currentIndex = index;
+                }
+                onExited: {
+                    menuView.currentIndex = -1;
                 }
             }
+        }
+        highlight: Rectangle {
+            x: 3
+            width: menuView.width - 6
+            height: 20
+            radius: 3
+            color: "#66666666"
         }
     }
 }
