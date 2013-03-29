@@ -43,12 +43,14 @@ layouts = sorted([
     "VisibilityLayout"
     ])
 
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+ogdfdir = os.path.normpath(os.path.join(scriptdir, "../ogdf"))
 headers = {}
-for root, dirs, files in os.walk("../ogdf/ogdf/"):
+for root, dirs, files in os.walk(os.path.join(ogdfdir, "ogdf")):
     for file in files:
         basename = file.replace(".h", "")           
         if basename in layouts:
-            header = os.path.relpath(os.path.join(root, file), "../ogdf")
+            header = os.path.relpath(os.path.join(root, file), ogdfdir)
             headers[basename] = header
 
 if len(headers) != len(layouts):
