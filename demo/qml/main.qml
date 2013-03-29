@@ -24,12 +24,15 @@ Rectangle {
         running: true
         repeat: false
         onTriggered: {
-            // Initial command (the hackish way).
+            // Setup initial state (the hackish way).
             graphTools.model.execute(0);
         }
     }
     Graph {
         id: graph
+        layout: GraphLayout {
+
+        }
     }
     GraphTools {
         id: graphTools
@@ -48,6 +51,7 @@ Rectangle {
             ListElement { caption: "Random/DiGraph" }
             ListElement { caption: "Iterate/Nodes" }
             ListElement { caption: "Iterate/Edges" }
+            ListElement { caption: "Layout (HACK)" }
             function execute(index) {
                 var n = 10;
                 var m = 20;
@@ -101,6 +105,9 @@ Rectangle {
                     consoleView.text += "\n...done!\n";
                     consoleView.visible = true;
                     break;
+                case 10:
+                    graph.layout.layout = GraphLayout.SugiyamaLayout
+                    break;
                 default:
                     console.log("NYI: execute " + index.toString());
                 }
@@ -108,8 +115,6 @@ Rectangle {
                 graph.eachNode(function(index) {
                     graph.modifyNode(index, { width: 50, height: 20 });
                 });
-                // Trigger layout.
-                graph.fmmmLayout();
                 //var left = graph.addNode();
                 //var bottom = graphView.graph.addNode();
                 //graphView.graph.addEdge(left, bottom);

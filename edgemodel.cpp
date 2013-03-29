@@ -30,6 +30,11 @@ EdgeModel::~EdgeModel()
 {
 }
 
+ogdf::edge EdgeModel::edge(int index)
+{
+    return m_edges[index];
+}
+
 void EdgeModel::attributesChanged()
 {
     QModelIndex top = createIndex(0, 0);

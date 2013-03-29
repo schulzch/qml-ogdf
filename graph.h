@@ -18,6 +18,7 @@
 #include <QJSValue>
 #include "nodemodel.h"
 #include "edgemodel.h"
+#include "graphlayout.h"
 #include "ogdf/basic/Graph.h"
 #include "ogdf/basic/GraphAttributes.h"
 
@@ -27,6 +28,7 @@
 class Graph : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(GraphLayout *layout READ layout WRITE setLayout NOTIFY layoutChanged)
     Q_PROPERTY(NodeModel *nodes READ nodes CONSTANT)
     Q_PROPERTY(EdgeModel *edges READ edges CONSTANT)
 public:
@@ -35,6 +37,9 @@ public:
 
     NodeModel *nodes();
     EdgeModel *edges();
+
+    GraphLayout *layout() const;
+    void setLayout(GraphLayout *layout);
 
     Q_INVOKABLE void randomGraph(int n, int m);
     Q_INVOKABLE bool randomSimpleGraph(int n, int m);
@@ -57,15 +62,20 @@ public:
 
     Q_INVOKABLE void clear();
 
-    Q_INVOKABLE void fmmmLayout();
+signals:
+    void layoutChanged();
 
 private:
     Q_DISABLE_COPY(Graph)
+    void invalidateLayout();
     QJSValue nodeAttributes(ogdf::node v);
     void setNodeAttributes(ogdf::node v, QJSValue object);
 
     ogdf::Graph m_graph;
     ogdf::GraphAttributes m_attributes;
+    int m_activeLoops;
+    bool m_layoutValid;
+    GraphLayout *m_layout;
     NodeModel m_nodes;
     EdgeModel m_edges;
 };

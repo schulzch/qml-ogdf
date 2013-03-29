@@ -13,7 +13,6 @@
  */
 #include "graph.h"
 #include "ogdf/basic/graph_generators.h"
-#include "ogdf/energybased/FMMMLayout.h"
 #include <QDebug>
 
 //ogdf::DPolyline &p = m_attributes.bends(e);
@@ -21,12 +20,15 @@
 //p.pushBack(ogdf::DPoint(20*e->index(),10));
 
 Graph::Graph(QObject *parent)
-    : QObject(parent), m_graph(),
+    : QObject(parent),
+      m_graph(),
       m_attributes(m_graph, ogdf::GraphAttributes::nodeGraphics |
                    ogdf::GraphAttributes::edgeGraphics),
-      m_nodes(&m_attributes), m_edges(&m_attributes)
+      m_activeLoops(0),
+      m_layout(0),
+      m_nodes(&m_attributes),
+      m_edges(&m_attributes)
 {
-    // Do nothing.
 }
 
 Graph::~Graph()
@@ -43,52 +45,77 @@ EdgeModel *Graph::edges()
     return &m_edges;
 }
 
+GraphLayout *Graph::layout() const
+{
+    return m_layout;
+}
+
+void Graph::setLayout(GraphLayout *layout)
+{
+    if (layout == m_layout) {
+        return;
+    }
+    m_layout = layout;
+    emit layoutChanged();
+    invalidateLayout();
+}
+
 void Graph::randomGraph(int n, int m)
 {
-    return ogdf::randomGraph(m_graph, m, n);
+    ogdf::randomGraph(m_graph, m, n);
+    invalidateLayout();
 }
 
 bool Graph::randomSimpleGraph(int n, int m)
 {
-    return ogdf::randomSimpleGraph(m_graph, n, m);
+    bool success = ogdf::randomSimpleGraph(m_graph, n, m);
+    invalidateLayout();
+    return success;
 }
 
 void Graph::randomBiconnectedGraph(int n, int m)
 {
-    return ogdf::randomBiconnectedGraph(m_graph, m, n);
+    ogdf::randomBiconnectedGraph(m_graph, m, n);
+    invalidateLayout();
 }
 
 void Graph::randomTriconnectedGraph(int n, double p1, double p2)
 {
-    return ogdf::randomTriconnectedGraph(m_graph, n, p1, p2);
+    ogdf::randomTriconnectedGraph(m_graph, n, p1, p2);
+    invalidateLayout();
 }
 
 void Graph::randomTree(int n)
 {
-    return ogdf::randomTree(m_graph, n);
+    ogdf::randomTree(m_graph, n);
+    invalidateLayout();
 }
 
 void Graph::randomTree(int n, int maxDeg, int maxWidth)
 {
-    return ogdf::randomTree(m_graph, n, maxDeg, maxWidth);
+    ogdf::randomTree(m_graph, n, maxDeg, maxWidth);
+    invalidateLayout();
 }
 
 void Graph::randomHierarchy(int n, int m, bool planar,
                             bool singleSource, bool longEdges)
 {
-    return ogdf::randomHierarchy(m_graph, n, m, planar,
-                                 singleSource, longEdges);
+    ogdf::randomHierarchy(m_graph, n, m, planar,
+                          singleSource, longEdges);
+    invalidateLayout();
 }
 
 void Graph::randomDiGraph(int n, double p)
 {
-    return ogdf::randomDiGraph(m_graph, n, p);
+    ogdf::randomDiGraph(m_graph, n, p);
+    invalidateLayout();
 }
 
 int Graph::addNode(QJSValue attributes)
 {
     ogdf::node v = m_graph.newNode();
     setNodeAttributes(v, attributes);
+    invalidateLayout();
     return v->index();
 }
 
@@ -98,9 +125,14 @@ void Graph::eachNode(QJSValue callback)
         QJSValueList arguments;
         arguments << QJSValue();
         ogdf::node v;
+        m_activeLoops++;
         forall_nodes (v, m_graph) {
             arguments[0] = v->index();
             callback.call(arguments);
+        }
+        m_activeLoops--;
+        if (!m_layoutValid) {
+            invalidateLayout();
         }
     } else {
         qCritical() << "Expected function as first argument";
@@ -109,24 +141,19 @@ void Graph::eachNode(QJSValue callback)
 
 void Graph::modifyNode(int index, QJSValue setter)
 {
-    bool found = false;
-    ogdf::node v;
-    forall_nodes (v, m_graph) {
-        if (v->index() == index) {
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
+    ogdf::node v = m_nodes.node(index);
+    if (!v) {
         qWarning() << "Can not modify node with index" << index;
         return;
     }
     if (setter.isObject()) {
         setNodeAttributes(v, setter);
+        invalidateLayout();
     } else if (setter.isCallable()) {
         QJSValueList arguments;
         arguments << QJSValue(nodeAttributes(v));
         setNodeAttributes(v, setter.call(arguments));
+        invalidateLayout();
     } else {
         qCritical() << "Expected object or function as second argument";
     }
@@ -134,43 +161,26 @@ void Graph::modifyNode(int index, QJSValue setter)
 
 void Graph::removeNode(int index)
 {
-    bool found = false;
-    ogdf::node v;
-    forall_nodes (v, m_graph) {
-        if (v->index() == index) {
-            m_graph.delNode(v);
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
+    ogdf::node v = m_nodes.node(index);
+    if (!v) {
         qWarning() << "Can not remove node with index" << index;
+    } else {
+        m_graph.delNode(v);
+        invalidateLayout();
     }
 }
 
 int Graph::addEdge(int sourceNode, int targetNode)
 {
-    bool found1 = false;
-    ogdf::node v1;
-    forall_nodes (v1, m_graph) {
-        if (v1->index() == sourceNode) {
-            found1 = true;
-            break;
-        }
-    }
-    bool found2 = false;
-    ogdf::node v2;
-    forall_nodes (v2, m_graph) {
-        if (v2->index() == targetNode) {
-            found2 = true;
-            break;
-        }
-    }
-    if (found1 && found2) {
-        ogdf::edge e = m_graph.newEdge(v1, v2);
-        return e->index();
-    } else {
+    ogdf::node v1 = m_nodes.node(sourceNode);
+    ogdf::node v2 = m_nodes.node(targetNode);
+    if (!v1 || !v2) {
+        qWarning() << "One node index does not exist";
         return -1;
+    } else {
+        ogdf::edge e = m_graph.newEdge(v1, v2);
+        invalidateLayout();
+        return e->index();
     }
 }
 
@@ -180,9 +190,14 @@ void Graph::eachEdge(QJSValue callback)
         QJSValueList arguments;
         arguments << QJSValue();
         ogdf::edge e;
+        m_activeLoops++;
         forall_edges (e, m_graph) {
             arguments[0] = e->index();
             callback.call(arguments);
+        }
+        m_activeLoops--;
+        if (!m_layoutValid) {
+            invalidateLayout();
         }
     } else {
         qCritical() << "Expected function(index) as first argument";
@@ -191,17 +206,12 @@ void Graph::eachEdge(QJSValue callback)
 
 void Graph::removeEdge(int index)
 {
-    bool found = false;
-    ogdf::edge e;
-    forall_edges (e, m_graph) {
-        if (e->index() == index) {
-            m_graph.delEdge(e);
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
+    ogdf::edge e = m_edges.edge(index);
+    if (!e) {
         qWarning() << "Can not remove egde with index" << index;
+    } else {
+        m_graph.delEdge(e);
+        invalidateLayout();
     }
 }
 
@@ -210,16 +220,15 @@ void Graph::clear()
     m_graph.clear();
 }
 
-void Graph::fmmmLayout()
+void Graph::invalidateLayout()
 {
-    ogdf::FMMMLayout fmmm;
-    fmmm.useHighLevelOptions(true);
-    fmmm.unitEdgeLength(15.0);
-    fmmm.newInitialPlacement(true);
-    fmmm.qualityVersusSpeed(ogdf::FMMMLayout::qvsGorgeousAndEfficient);
-    fmmm.call(m_attributes);
-    m_nodes.attributesChanged();
-    m_edges.attributesChanged();
+    m_layoutValid = false;
+    if (m_layout && m_activeLoops == 0) {
+        m_layout->call(m_attributes);
+        m_nodes.attributesChanged();
+        m_edges.attributesChanged();
+        m_layoutValid = true;
+    }
 }
 
 QJSValue Graph::nodeAttributes(ogdf::node v)

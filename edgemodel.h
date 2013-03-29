@@ -38,6 +38,7 @@ public:
     EdgeModel(ogdf::GraphAttributes *attributes, QObject *parent = 0);
     ~EdgeModel();
 
+    ogdf::edge edge(int index);
     void attributesChanged();
 
     // QAbstractListModel

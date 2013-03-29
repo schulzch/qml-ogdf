@@ -28,6 +28,11 @@ NodeModel::~NodeModel()
 {
 }
 
+ogdf::node NodeModel::node(int index)
+{
+    return m_nodes[index];
+}
+
 void NodeModel::attributesChanged()
 {
     QModelIndex top = createIndex(0, 0);

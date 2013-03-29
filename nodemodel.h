@@ -37,6 +37,7 @@ public:
     NodeModel(ogdf::GraphAttributes *attributes, QObject *parent = 0);
     ~NodeModel();
 
+    ogdf::node node(int index);
     void attributesChanged();
 
     // QAbstractListModel
