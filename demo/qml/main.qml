@@ -19,6 +19,15 @@ Rectangle {
     width: 800
     height: 600
     color: "#272822"
+    Timer {
+        interval: 0
+        running: true
+        repeat: false
+        onTriggered: {
+            // Initial command (the hackish way).
+            graphTools.model.execute(0);
+        }
+    }
     Graph {
         id: graph
     }
@@ -95,10 +104,14 @@ Rectangle {
                 default:
                     console.log("NYI: execute " + index.toString());
                 }
+                // Assign size to every node.
+                graph.eachNode(function(index) {
+                    graph.modifyNode(index, { width: 50, height: 20 });
+                });
+                // Trigger layout.
                 graph.fmmmLayout();
-
                 //var left = graph.addNode();
-                //var bottom = graphView.graph.addNode(10, 10, 50, 50);
+                //var bottom = graphView.graph.addNode();
                 //graphView.graph.addEdge(left, bottom);
                 //console.log("Adding nodes " + left + " and " + bottom + " along with an edge");
             }

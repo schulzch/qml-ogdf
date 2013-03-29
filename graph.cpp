@@ -16,12 +16,6 @@
 #include "ogdf/energybased/FMMMLayout.h"
 #include <QDebug>
 
-//m_attributes.x(v) = options.value("x", 0.0f).toDouble();
-//m_attributes.y(v) = options.value("y", 0.0f).toDouble();
-//m_attributes.width(v) = options.value("width", 0.0f).toDouble();
-//m_attributes.height(v) = options.value("height", 0.0f).toDouble();
-//m_attributes.shapeNode(v) = ogdf::GraphAttributes::rectangle;
-
 //ogdf::DPolyline &p = m_attributes.bends(e);
 //p.pushBack(ogdf::DPoint(10,20*e->index()));
 //p.pushBack(ogdf::DPoint(20*e->index(),10));
@@ -91,9 +85,11 @@ void Graph::randomDiGraph(int n, double p)
     return ogdf::randomDiGraph(m_graph, n, p);
 }
 
-int Graph::addNode()
+int Graph::addNode(QJSValue attributes)
 {
-    return m_graph.newNode()->index();
+    ogdf::node v = m_graph.newNode();
+    setNodeAttributes(v, attributes);
+    return v->index();
 }
 
 void Graph::eachNode(QJSValue callback)
@@ -107,7 +103,32 @@ void Graph::eachNode(QJSValue callback)
             callback.call(arguments);
         }
     } else {
-        qCritical() << "Expected function(index) as first argument";
+        qCritical() << "Expected function as first argument";
+    }
+}
+
+void Graph::modifyNode(int index, QJSValue setter)
+{
+    bool found = false;
+    ogdf::node v;
+    forall_nodes (v, m_graph) {
+        if (v->index() == index) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        qWarning() << "Can not modify node with index" << index;
+        return;
+    }
+    if (setter.isObject()) {
+        setNodeAttributes(v, setter);
+    } else if (setter.isCallable()) {
+        QJSValueList arguments;
+        arguments << QJSValue(nodeAttributes(v));
+        setNodeAttributes(v, setter.call(arguments));
+    } else {
+        qCritical() << "Expected object or function as second argument";
     }
 }
 
@@ -199,4 +220,23 @@ void Graph::fmmmLayout()
     fmmm.call(m_attributes);
     m_nodes.attributesChanged();
     m_edges.attributesChanged();
+}
+
+QJSValue Graph::nodeAttributes(ogdf::node v)
+{
+    QJSValue object;
+    object.setProperty("x", m_attributes.x(v));
+    object.setProperty("y", m_attributes.y(v));
+    object.setProperty("width", m_attributes.width(v));
+    object.setProperty("height", m_attributes.height(v));
+    return object;
+}
+
+void Graph::setNodeAttributes(ogdf::node v, QJSValue object)
+{
+    m_attributes.x(v) = object.property("x").toNumber();
+    m_attributes.y(v) = object.property("y").toNumber();
+    m_attributes.width(v) = object.property("width").toNumber();
+    m_attributes.height(v) = object.property("height").toNumber();
+    m_attributes.shapeNode(v) = ogdf::GraphAttributes::rectangle;
 }

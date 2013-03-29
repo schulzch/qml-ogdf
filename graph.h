@@ -46,8 +46,9 @@ public:
                                      bool singleSource, bool longEdges);
     Q_INVOKABLE void randomDiGraph(int n, double p);
 
-    Q_INVOKABLE int addNode();
+    Q_INVOKABLE int addNode(QJSValue attributes);
     Q_INVOKABLE void eachNode(QJSValue callback);
+    Q_INVOKABLE void modifyNode(int index, QJSValue setter);
     Q_INVOKABLE void removeNode(int index);
 
     Q_INVOKABLE int addEdge(int sourceNode, int targetNode);
@@ -60,6 +61,8 @@ public:
 
 private:
     Q_DISABLE_COPY(Graph)
+    QJSValue nodeAttributes(ogdf::node v);
+    void setNodeAttributes(ogdf::node v, QJSValue object);
 
     ogdf::Graph m_graph;
     ogdf::GraphAttributes m_attributes;

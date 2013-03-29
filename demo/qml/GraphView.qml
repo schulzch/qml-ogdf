@@ -17,6 +17,7 @@ import OGDF 1.0
 CanvasView {
     id: graphView
     property QtObject graph: null
+    clip: true
     Item {
         id: graphScene
         property QtObject graph: null
@@ -27,39 +28,74 @@ CanvasView {
         Repeater {
             model: graphView.graph.edges
             delegate: Canvas {
+                property int sourceX: model.sourceX
+                property int sourceY: model.sourceY
+                property int targetX: model.targetX
+                property int targetY: model.targetY
                 anchors.fill: parent
                 renderTarget: Canvas.Image
                 antialiasing: true
                 onPaint: {
                     var context = getContext('2d');
-                    context.strokeStyle = '#555';
-                    context.lineWidth = 1.5;
+                    context.strokeStyle = '#ffffff';
+                    context.lineWidth = 1;
                     context.beginPath();
-                    context.moveTo(model.sourceX, model.sourceY);
+                    context.moveTo(sourceX, sourceY);
                     for (var bend in model.bends) {
                         context.lineTo(bend.x, bend.y);
                     }
-                    context.lineTo(model.targetX, model.targetY);
+                    context.lineTo(targetX, targetY);
                     context.stroke();
+                }
+                Behavior on sourceX {
+                    NumberAnimation {
+                        duration: 500
+                    }
+                }
+                Behavior on sourceY {
+                    NumberAnimation {
+                        duration: 500
+                    }
+                }
+                Behavior on targetX {
+                    NumberAnimation {
+                        duration: 500
+                    }
+                }
+                Behavior on targetY {
+                    NumberAnimation {
+                        duration: 500
+                    }
                 }
             }
         }
         Repeater {
             model: graphView.graph.nodes
             delegate: Rectangle {
-                x: model.x
-                y: model.y
+                x: model.x - model.width / 2
+                y: model.y - model.height / 2
                 width: model.width
                 height: model.height
-                color: "gray"
+                color: "#49483e"
                 radius: 4
                 border.width: 1
-                border.color: "black"
+                border.color: "#af9476"
+                Behavior on x {
+                    NumberAnimation {
+                        duration: 500
+                    }
+                }
+                Behavior on y {
+                    NumberAnimation {
+                        duration: 500
+                    }
+                }
                 Text {
                     anchors.fill: parent
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     text: model.index
+                    color: "#ffffff"
                 }
                 MouseArea {
                     anchors.fill: parent
