@@ -37,7 +37,7 @@ public:
     EdgeModel *edges();
 
     Q_INVOKABLE void randomGraph(int n, int m);
-    Q_INVOKABLE bool randomSimpleGraph(int m, int n);
+    Q_INVOKABLE bool randomSimpleGraph(int n, int m);
     Q_INVOKABLE void randomBiconnectedGraph(int n, int m);
     Q_INVOKABLE void randomTriconnectedGraph(int n, double p1, double p2);
     Q_INVOKABLE void randomTree(int n);

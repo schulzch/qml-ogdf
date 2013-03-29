@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/CanvasView.qml</file>
-        <file>qml/GraphView.qml</file>
+        <file>qml/ConsoleView.qml</file>
         <file>qml/GraphTools.qml</file>
+        <file>qml/GraphView.qml</file>
         <file>qml/main.qml</file>
     </qresource>
 </RCC>

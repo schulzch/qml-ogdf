@@ -26,18 +26,19 @@ ShaderEffect {
         "uniform highp vec2 size;" +
         "uniform highp float time;" +
         "const highp float TWOPI = 6.28318530717958647693;" +
-        "const int num = 200;" +
+        "const int NUM = 200;" +
         "void main() {" +
         "  highp float sum = 0.0;" +
         "  highp float s = size.x / 800.0;" +
-        "  for (int i = 0; i < num; i++) {" +
+        "  for (int i = 0; i < NUM; i++) {" +
         "    highp vec2 position = size / 2.0;" +
-        "    highp float t = float(i) / float(num) * TWOPI + time;" +
+        "    highp float t = float(i) / float(NUM) * TWOPI + time;" +
         "    position.x += sin(9.0 * t) * size.x * 0.35;" +
         "    position.y += sin(7.0 * t) * size.y * 0.48;" +
         "    sum += s / length(gl_FragCoord.xy - position - location);" +
         "  }" +
-        "  gl_FragColor = vec4(0, sum * 0.5, sum, 1.0);" +
+        "  highp float value =  pow(sum, 2.0);" +
+        "  gl_FragColor = vec4(value * 0.5, value * 0.7, value, value);" +
         "}"
     NumberAnimation on time {
         loops: Animation.Infinite;

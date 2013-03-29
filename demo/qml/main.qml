@@ -18,7 +18,7 @@ Rectangle {
     id: container
     width: 800
     height: 600
-    color: "white"
+    color: "#272822"
     Graph {
         id: graph
     }
@@ -29,31 +29,93 @@ Rectangle {
         anchors.bottom: parent.bottom
         width: 150
         model: ListModel {
+            ListElement { caption: "Random" }
             ListElement { caption: "Random/Simple" }
-            ListElement { caption: "NYI: More" }
-            ListElement { caption: "NYI: Menu-Items" }
+            ListElement { caption: "Random/Biconnected" }
+            ListElement { caption: "Random/Triconnected" }
+            ListElement { caption: "Random/Tree/N" }
+            ListElement { caption: "Random/Tree/Width" }
+            ListElement { caption: "Random/Hierarchy" }
+            ListElement { caption: "Random/DiGraph" }
+            ListElement { caption: "Iterate/Nodes" }
+            ListElement { caption: "Iterate/Edges" }
             function execute(index) {
-                if (index !== 0) {
-                    console.log("NYI: execute " + index);
-                    return;
+                var n = 10;
+                var m = 20;
+                var p = 0.618;
+                switch (index) {
+                case 0:
+                    graph.clear();
+                    graph.randomGraph(n, m);
+                    break;
+                case 1:
+                    graph.clear();
+                    graph.randomSimpleGraph(n, m);
+                    break;
+                case 2:
+                    graph.clear();
+                    graph.randomBiconnectedGraph(n, m);
+                    break;
+                case 3:
+                    graph.clear();
+                    graph.randomTriconnectedGraph(n, p, 1.0 - p);
+                    break;
+                case 4:
+                    graph.clear();
+                    graph.randomTree(n);
+                    break;
+                case 5:
+                    graph.clear();
+                    graph.randomTree(n, n / 2.0, graphView.width);
+                    break;
+                case 6:
+                    graph.clear();
+                    graph.randomHierarchy(n, m, true, false, true);
+                    break;
+                case 7:
+                    graph.clear();
+                    graph.randomDiGraph(n, p);
+                    break;
+                case 8:
+                    consoleView.text = "Iterating nodes...\n";
+                    graph.eachNode(function(index) {
+                        consoleView.text += " " + index;
+                    });
+                    consoleView.text += "\n...done!\n";
+                    consoleView.visible = true;
+                    break;
+                case 9:
+                    consoleView.text = "Iterating edges...\n ";
+                    graph.eachEdge(function(index) {
+                        consoleView.text += " " + index;
+                    });
+                    consoleView.text += "\n...done!\n";
+                    consoleView.visible = true;
+                    break;
+                default:
+                    console.log("NYI: execute " + index.toString());
                 }
-                graph.clear();
-                graph.randomSimpleGraph(10, 20);
-                graph.eachNode(function(index) {
-                    //console.log("test" + index);
-                });
-                var left = graph.addNode();
-                // var bottom = graphView.graph.addNode(10, 10, 50, 50);
-                // graphView.graph.addEdge(left, bottom);
-                //console.log("Adding nodes " + left + " and " + bottom + " along with an edge");
                 graph.fmmmLayout();
+
+                //var left = graph.addNode();
+                //var bottom = graphView.graph.addNode(10, 10, 50, 50);
+                //graphView.graph.addEdge(left, bottom);
+                //console.log("Adding nodes " + left + " and " + bottom + " along with an edge");
             }
         }
+    }
+    Rectangle {
+        id: graphToolsBorder
+        width: 1
+        anchors.top: parent.top
+        anchors.right: graphTools.left
+        anchors.bottom: parent.bottom
+        color: "#22231d"
     }
     GraphView {
         id: graphView
         anchors.top: parent.top
-        anchors.right: graphTools.left
+        anchors.right: graphToolsBorder.left
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         graph: graph
@@ -68,12 +130,19 @@ Rectangle {
             anchors.top: parent.top
             anchors.left: parent.left
             text: "Nodes: " + graph.nodes.count
+            color: "#ffffff"
         }
         Text {
             id: edgeCount
             anchors.top: nodeCount.bottom
             anchors.left: parent.left
             text: "Edges: " + graph.edges.count
+            color: "#ffffff"
         }
+    }
+    ConsoleView {
+        id: consoleView
+        anchors.fill: parent
+        visible: false
     }
 }

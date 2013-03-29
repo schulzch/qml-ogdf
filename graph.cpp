@@ -54,9 +54,9 @@ void Graph::randomGraph(int n, int m)
     return ogdf::randomGraph(m_graph, m, n);
 }
 
-bool Graph::randomSimpleGraph(int m, int n)
+bool Graph::randomSimpleGraph(int n, int m)
 {
-    return ogdf::randomSimpleGraph(m_graph, m, n);
+    return ogdf::randomSimpleGraph(m_graph, n, m);
 }
 
 void Graph::randomBiconnectedGraph(int n, int m)

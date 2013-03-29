@@ -48,7 +48,7 @@ Flickable {
     ShaderEffect {
         id: background
         property real spacing: 4.0
-        property color lineColor: "#e3e3e3"
+        property color lineColor: "#22231d"
         property color color: "transparent"
         anchors.fill: parent
         fragmentShader:
