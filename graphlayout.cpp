@@ -45,7 +45,7 @@
 #include "ogdf/upward/DominanceLayout.h"
 #include "ogdf/upward/UpwardPlanarizationLayout.h"
 #include "ogdf/upward/VisibilityLayout.h"
-#include <QDebug>
+#include <QQmlInfo>
 
 #define CREATE_MODULE(name) case name##: \
     layout = new ogdf::##name(); \
@@ -137,12 +137,93 @@ void GraphLayout::call(ogdf::GraphAttributes &attribtues)
     try {
         m_layout->call(attribtues);
     } catch (ogdf::AlgorithmFailureException &e) {
-        qCritical() << "ogdf::AlgorithmFailureException" << e.file() << ":" << e.line();
+        QString reason = QString("of an unknown reason (%1)").arg(e.exceptionCode());
+        switch (e.exceptionCode()) {
+        case ogdf::afcUnknown:
+            // Do nothing.
+            break;
+        case ogdf::afcIllegalParameter:
+            reason = "of an illegal parameter";
+            break;
+        case ogdf::afcNoFlow:
+            reason = "min-cost flow solver could not find a legal flow";
+            break;
+        case ogdf::afcSort:
+            reason = "sequence is not sorted";
+            break;
+        case ogdf::afcLabel:
+            reason = "labelling failed";
+            break;
+        case ogdf::afcExternalFace:
+            reason = "external face is not correct";
+            break;
+        case ogdf::afcForbiddenCrossing:
+            reason = "crossing were forbidden";
+            break;
+        case ogdf::afcTimelimitExceeded:
+            reason = "timelimit exceeded";
+            break;
+        case ogdf::afcNoSolutionFound:
+            reason = "it could not find a solution";
+            break;
+        case ogdf::afcSTOP:
+            // Do nothing.
+            break;
+        }
+        qmlInfo(this) << "Layout algorithm failed, because " << reason;
     } catch (ogdf::PreconditionViolatedException &e) {
-        qCritical() << "ogdf::PreconditionViolatedException" << e.file() << ":" << e.line();
-    } catch (ogdf::Exception &e) {
-        qCritical() << "ogdf::Exception" << e.file() << ":" << e.line();
+        QString reason = QString("An unknown reason (%1)").arg(e.exceptionCode());
+        switch (e.exceptionCode()) {
+        case ogdf::pvcUnknown:
+            // Do nothing.
+            break;
+        case ogdf::pvcSelfLoop:
+            reason = "Graph contains a self-loop, which";
+            break;
+        case ogdf::pvcTreeHierarchies:
+            reason = "Graph is not a tree, which";
+            break;
+        case ogdf::pvcAcyclicHierarchies:
+            reason = "Graph is not acyclic, which";
+            break;
+        case ogdf::pvcSingleSource:
+            reason = "Graph has not a single source, which";
+            break;
+        case ogdf::pvcUpwardPlanar:
+            reason = "Graph is not upward planar, which";
+            break;
+        case ogdf::pvcTree:
+            reason = "Graph is not a rooted tree, which";
+            break;
+        case ogdf::pvcForest:
+            reason = "Graph is not a rooted forest, which";
+            break;
+        case ogdf::pvcOrthogonal:
+            reason = "Layout is not orthogonal, which";
+            break;
+        case ogdf::pvcPlanar:
+            reason = "Graph is not planar, which";
+            break;
+        case ogdf::pvcClusterPlanar:
+            reason = "Graph is not cluster planar, which";
+            break;
+        case ogdf::pvcNoCopy:
+            reason = "Graph is not a copy of the corresponding graph, which";
+            break;
+        case ogdf::pvcConnected:
+            reason = "Graph is not connected, which";
+            break;
+        case ogdf::pvcBiconnected:
+            reason = "Graph is not twoconnected, which";
+            break;
+        case ogdf::pvcSTOP:
+            // Do nothing.
+            break;
+        }
+        qmlInfo(this) << reason << " violates layout preconditions";
+    } catch (ogdf::Exception &) {
+        qmlInfo(this) << "OGDF exception caught";
     } catch (...) {
-        qCritical() << "Unknown exception caught while layouting";
+        qmlInfo(this) << "Unknown exception caught";
     }
 }

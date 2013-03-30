@@ -13,7 +13,7 @@
  */
 #include "graph.h"
 #include "ogdf/basic/graph_generators.h"
-#include <QDebug>
+#include <QQmlInfo>
 
 //ogdf::DPolyline &p = m_attributes.bends(e);
 //p.pushBack(ogdf::DPoint(10,20*e->index()));
@@ -120,7 +120,7 @@ void Graph::eachNode(QJSValue callback)
             invalidateLayout();
         }
     } else {
-        qCritical() << "Expected function as first argument";
+        qmlInfo(this) << "Expected function as first argument";
     }
 }
 
@@ -128,7 +128,7 @@ void Graph::modifyNode(int index, QJSValue setter)
 {
     ogdf::node v = m_nodes.node(index);
     if (!v) {
-        qWarning() << "Can not modify node with index" << index;
+        qmlInfo(this) << "Can not modify node with index" << index;
         return;
     }
     if (setter.isObject()) {
@@ -140,7 +140,7 @@ void Graph::modifyNode(int index, QJSValue setter)
         setNodeAttributes(v, setter.call(arguments));
         invalidateLayout();
     } else {
-        qCritical() << "Expected object or function as second argument";
+        qmlInfo(this) << "Expected object or function as second argument";
     }
 }
 
@@ -148,7 +148,7 @@ void Graph::removeNode(int index)
 {
     ogdf::node v = m_nodes.node(index);
     if (!v) {
-        qWarning() << "Can not remove node with index" << index;
+        qmlInfo(this) << "Can not remove node with index" << index;
     } else {
         m_graph.delNode(v);
         invalidateLayout();
@@ -160,7 +160,7 @@ int Graph::addEdge(int sourceNode, int targetNode)
     ogdf::node v1 = m_nodes.node(sourceNode);
     ogdf::node v2 = m_nodes.node(targetNode);
     if (!v1 || !v2) {
-        qWarning() << "One node index does not exist";
+        qmlInfo(this) << "One node index does not exist";
         return -1;
     } else {
         ogdf::edge e = m_graph.newEdge(v1, v2);
@@ -185,7 +185,7 @@ void Graph::eachEdge(QJSValue callback)
             invalidateLayout();
         }
     } else {
-        qCritical() << "Expected function(index) as first argument";
+        qmlInfo(this) << "Expected function(index) as first argument";
     }
 }
 
@@ -193,7 +193,7 @@ void Graph::removeEdge(int index)
 {
     ogdf::edge e = m_edges.edge(index);
     if (!e) {
-        qWarning() << "Can not remove egde with index" << index;
+        qmlInfo(this) << "Can not remove egde with index" << index;
     } else {
         m_graph.delEdge(e);
         invalidateLayout();
