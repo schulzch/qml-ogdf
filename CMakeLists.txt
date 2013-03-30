@@ -42,6 +42,8 @@ file(GLOB HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 include_directories("ogdf")
 qt5_wrap_cpp(MOC_SOURCES ${HEADERS})
 add_library(ogdfplugin SHARED ${SOURCES} ${MOC_SOURCES} ${OGDF_SOURCES})
+set_target_properties(ogdfplugin PROPERTIES COMPILE_DEFINITIONS
+    "OGDF_MEMORY_MALLOC_TS=1")
 if(WIN32)
     target_link_libraries(ogdfplugin "Psapi.lib")
 endif()
