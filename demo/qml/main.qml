@@ -30,9 +30,6 @@ Rectangle {
     }
     Graph {
         id: graph
-        layout: GraphLayout {
-
-        }
     }
     GraphTools {
         id: graphTools
@@ -106,7 +103,7 @@ Rectangle {
                     consoleView.visible = true;
                     break;
                 case 10:
-                    graph.layout.layout = GraphLayout.SugiyamaLayout
+                    graph.layout.algorithm = GraphLayout.SugiyamaLayout
                     break;
                 default:
                     console.log("NYI: execute " + index.toString());

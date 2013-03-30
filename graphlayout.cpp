@@ -47,33 +47,32 @@
 #include "ogdf/upward/VisibilityLayout.h"
 
 #define CREATE_MODULE(name) case name##: \
-    layoutModule = new ogdf::##name(); \
+    layout = new ogdf::##name(); \
     break
 
 GraphLayout::GraphLayout(QObject *parent)
-    : QObject(parent), m_layoutModule(0)
+    : QObject(parent), m_layout(new ogdf::FMMMLayout()),
+      m_algorithm(GraphLayout::FMMMLayout), m_enabled(true)
 {
-    setLayout(GraphLayout::FMMMLayout);
 }
 
 GraphLayout::~GraphLayout()
 {
-    delete m_layoutModule;
 }
 
-GraphLayout::Layout GraphLayout::layout() const
+GraphLayout::Algorithm GraphLayout::algorithm() const
 {
-    return m_layout;
+    return m_algorithm;
 }
 
-void GraphLayout::setLayout(Layout layout)
+void GraphLayout::setAlgorithm(Algorithm algorithm)
 {
-    if (layout == m_layout) {
+    if (algorithm == m_algorithm) {
         return;
     }
     // Create layout module by name.
-    ogdf::LayoutModule *layoutModule = 0;
-    switch (layout) {
+    ogdf::LayoutModule *layout = 0;
+    switch (algorithm) {
     CREATE_MODULE(BalloonLayout);
     CREATE_MODULE(CircularLayout);
     CREATE_MODULE(ComponentSplitterLayout);
@@ -109,16 +108,29 @@ void GraphLayout::setLayout(Layout layout)
     CREATE_MODULE(UpwardPlanarizationLayout);
     CREATE_MODULE(VisibilityLayout);
     }
-    if (layoutModule) {
-        delete m_layoutModule;
-        m_layoutModule = layoutModule;
-        m_layout = layout;
-        emit layoutChanged();
+    if (layout) {
+        m_layout.reset(layout);
+        m_algorithm = algorithm;
+        emit algorithmChanged();
+    }
+}
+
+bool GraphLayout::enabled() const
+{
+    return m_enabled;
+}
+
+void GraphLayout::setEnabled(bool enabled)
+{
+    if (enabled != m_enabled) {
+        m_enabled = enabled;
+        emit enabledChanged();
     }
 }
 
 void GraphLayout::call(ogdf::GraphAttributes &attribtues)
 {
-    Q_ASSERT(m_layoutModule);
-    m_layoutModule->call(attribtues);
+    if (m_enabled) {
+        m_layout->call(attribtues);
+    }
 }

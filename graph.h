@@ -28,7 +28,7 @@
 class Graph : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(GraphLayout *layout READ layout WRITE setLayout NOTIFY layoutChanged)
+    Q_PROPERTY(GraphLayout *layout READ layout CONSTANT)
     Q_PROPERTY(NodeModel *nodes READ nodes CONSTANT)
     Q_PROPERTY(EdgeModel *edges READ edges CONSTANT)
 public:
@@ -39,7 +39,6 @@ public:
     EdgeModel *edges();
 
     GraphLayout *layout() const;
-    void setLayout(GraphLayout *layout);
 
     Q_INVOKABLE void randomGraph(int n, int m);
     Q_INVOKABLE bool randomSimpleGraph(int n, int m);
@@ -62,9 +61,6 @@ public:
 
     Q_INVOKABLE void clear();
 
-signals:
-    void layoutChanged();
-
 private:
     Q_DISABLE_COPY(Graph)
     void invalidateLayout();
@@ -75,7 +71,7 @@ private:
     ogdf::GraphAttributes m_attributes;
     int m_activeLoops;
     bool m_layoutValid;
-    GraphLayout *m_layout;
+    QScopedPointer<GraphLayout> m_layout;
     NodeModel m_nodes;
     EdgeModel m_edges;
 };

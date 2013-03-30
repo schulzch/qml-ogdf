@@ -23,10 +23,11 @@
 class GraphLayout : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(Layout)
-    Q_PROPERTY(Layout layout READ layout WRITE setLayout NOTIFY layoutChanged)
+    Q_ENUMS(Algorithm)
+    Q_PROPERTY(Algorithm algorithm READ algorithm WRITE setAlgorithm NOTIFY algorithmChanged)
+    Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
 public:
-    enum Layout {
+    enum Algorithm {
         BalloonLayout,
         CircularLayout,
         ComponentSplitterLayout,
@@ -66,19 +67,24 @@ public:
     GraphLayout(QObject *parent = 0);
     ~GraphLayout();
 
-    Layout layout() const;
-    void setLayout(Layout layout);
+    Algorithm algorithm() const;
+    void setAlgorithm(Algorithm algorithm);
+
+    bool enabled() const;
+    void setEnabled(bool enabled);
 
     void call(ogdf::GraphAttributes &attribtues);
 
 signals:
-    void layoutChanged();
+    void algorithmChanged();
+    void enabledChanged();
 
 private:
     Q_DISABLE_COPY(GraphLayout)
 
-    ogdf::LayoutModule *m_layoutModule;
-    Layout m_layout;
+    QScopedPointer<ogdf::LayoutModule> m_layout;
+    Algorithm m_algorithm;
+    bool m_enabled;
 };
 
 #endif

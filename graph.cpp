@@ -25,7 +25,8 @@ Graph::Graph(QObject *parent)
       m_attributes(m_graph, ogdf::GraphAttributes::nodeGraphics |
                    ogdf::GraphAttributes::edgeGraphics),
       m_activeLoops(0),
-      m_layout(0),
+      m_layoutValid(false),
+      m_layout(new GraphLayout()),
       m_nodes(&m_attributes),
       m_edges(&m_attributes)
 {
@@ -47,17 +48,7 @@ EdgeModel *Graph::edges()
 
 GraphLayout *Graph::layout() const
 {
-    return m_layout;
-}
-
-void Graph::setLayout(GraphLayout *layout)
-{
-    if (layout == m_layout) {
-        return;
-    }
-    m_layout = layout;
-    emit layoutChanged();
-    invalidateLayout();
+    return m_layout.data();
 }
 
 void Graph::randomGraph(int n, int m)
