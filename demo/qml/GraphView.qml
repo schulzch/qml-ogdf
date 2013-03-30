@@ -20,7 +20,6 @@ CanvasView {
     clip: true
     Item {
         id: graphScene
-        property QtObject graph: null
         x: childrenRect.x
         y: childrenRect.y
         width: childrenRect.width
@@ -32,7 +31,14 @@ CanvasView {
                 property int sourceY: model.sourceY
                 property int targetX: model.targetX
                 property int targetY: model.targetY
-                anchors.fill: parent
+                property int minX: Math.min(sourceX, targetX)
+                property int minY: Math.min(sourceY, targetY)
+                property int maxX: Math.max(sourceX, targetX)
+                property int maxY: Math.max(sourceY, targetY)
+                x: minX
+                y: minY
+                width: maxX - minX
+                height: maxY - minY
                 renderTarget: Canvas.Image
                 antialiasing: true
                 onPaint: {
@@ -40,11 +46,11 @@ CanvasView {
                     context.strokeStyle = '#ffffff';
                     context.lineWidth = 1;
                     context.beginPath();
-                    context.moveTo(sourceX, sourceY);
+                    context.moveTo(sourceX - x, sourceY - y);
                     for (var bend in model.bends) {
-                        context.lineTo(bend.x, bend.y);
+                        //context.lineTo(bend.x - x, bend.y - y);
                     }
-                    context.lineTo(targetX, targetY);
+                    context.lineTo(targetX - x, targetY - y);
                     context.stroke();
                 }
                 Behavior on sourceX {
@@ -91,17 +97,9 @@ CanvasView {
                     }
                 }
                 Text {
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: model.index
+                    anchors.centerIn: parent
                     color: "#ffffff"
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        graphView.graph.removeNode(model.index);
-                    }
+                    text: model.index
                 }
             }
         }

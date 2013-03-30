@@ -88,6 +88,7 @@ ShaderEffect {
             font.pixelSize: 12
             color: menuView.currentIndex == index ? "#ffffff" : "#66666666"
             text: model.caption
+            clip: true
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
@@ -110,6 +111,23 @@ ShaderEffect {
             height: 20
             radius: 3
             color: "#66666666"
+        }
+        Item {
+            id: scrollArea
+            anchors.right: parent.right
+            anchors.rightMargin: 2
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 2
+            height: parent.height
+            clip: true
+            Rectangle {
+                x: 0
+                y: menuView.visibleArea.yPosition * parent.height
+                height: menuView.visibleArea.heightRatio * parent.height
+                width: parent.width
+                color: "#99999999"
+            }
         }
     }
 }

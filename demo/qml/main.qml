@@ -48,7 +48,40 @@ Rectangle {
             ListElement { caption: "Random/DiGraph" }
             ListElement { caption: "Iterate/Nodes" }
             ListElement { caption: "Iterate/Edges" }
-            ListElement { caption: "Layout (HACK)" }
+            ListElement { caption: "Layout/Balloon" }
+            ListElement { caption: "Layout/Circular" }
+            ListElement { caption: "Layout/ComponentSplitter" }
+            ListElement { caption: "Layout/DavidsonHarel" }
+            ListElement { caption: "Layout/Dominance" }
+            ListElement { caption: "Layout/FMMM" }
+            ListElement { caption: "Layout/FPP" }
+            ListElement { caption: "Layout/FME" }
+            ListElement { caption: "Layout/FMME" }
+            ListElement { caption: "Layout/GEM" }
+            ListElement { caption: "Layout/MMMExampleFast" }
+            ListElement { caption: "Layout/MMMExampleNice" }
+            ListElement { caption: "Layout/MMMExampleNoTwist" }
+            ListElement { caption: "Layout/MixedForce" }
+            ListElement { caption: "Layout/MixedModel" }
+            ListElement { caption: "Layout/ModularMultilevelMixer" }
+            ListElement { caption: "Layout/Multilevel" }
+            ListElement { caption: "Layout/PlanarDraw" }
+            ListElement { caption: "Layout/PlanarStraight" }
+            ListElement { caption: "Layout/PlanarizationGrid" }
+            ListElement { caption: "Layout/Planarization" }
+            ListElement { caption: "Layout/Preprocessor" }
+            ListElement { caption: "Layout/RadialTree" }
+            ListElement { caption: "Layout/Scaling" }
+            ListElement { caption: "Layout/Schnyder" }
+            ListElement { caption: "Layout/SpringEmbedderFR" }
+            ListElement { caption: "Layout/SpringEmbedderFRExact" }
+            ListElement { caption: "Layout/SpringEmbedderKK" }
+            ListElement { caption: "Layout/StressMajorization" }
+            ListElement { caption: "Layout/Sugiyama" }
+            ListElement { caption: "Layout/Tree" }
+            ListElement { caption: "Layout/Tutte" }
+            ListElement { caption: "Layout/UpwardPlanarization" }
+            ListElement { caption: "Layout/Visibility" }
             function execute(index) {
                 var n = 10;
                 var m = 20;
@@ -103,7 +136,106 @@ Rectangle {
                     consoleView.visible = true;
                     break;
                 case 10:
-                    graph.layout.algorithm = GraphLayout.SugiyamaLayout
+                    graph.layout.algorithm = GraphLayout.BalloonLayout;
+                    break;
+                case 11:
+                    graph.layout.algorithm = GraphLayout.CircularLayout;
+                    break;
+                case 12:
+                    graph.layout.algorithm = GraphLayout.ComponentSplitterLayout;
+                    break;
+                case 13:
+                    graph.layout.algorithm = GraphLayout.DavidsonHarelLayout;
+                    break;
+                case 14:
+                    graph.layout.algorithm = GraphLayout.DominanceLayout;
+                    break;
+                case 15:
+                    graph.layout.algorithm = GraphLayout.FMMMLayout;
+                    break;
+                case 16:
+                    graph.layout.algorithm = GraphLayout.FPPLayout;
+                    break;
+                case 17:
+                    graph.layout.algorithm = GraphLayout.FastMultipoleEmbedder;
+                    break;
+                case 18:
+                    graph.layout.algorithm = GraphLayout.FastMultipoleMultilevelEmbedder;
+                    break;
+                case 19:
+                    graph.layout.algorithm = GraphLayout.GEMLayout;
+                    break;
+                case 20:
+                    graph.layout.algorithm = GraphLayout.MMMExampleFastLayout;
+                    break;
+                case 21:
+                    graph.layout.algorithm = GraphLayout.MMMExampleNiceLayout;
+                    break;
+                case 22:
+                    graph.layout.algorithm = GraphLayout.MMMExampleNoTwistLayout;
+                    break;
+                case 23:
+                    graph.layout.algorithm = GraphLayout.MixedForceLayout;
+                    break;
+                case 24:
+                    graph.layout.algorithm = GraphLayout.MixedModelLayout;
+                    break;
+                case 25:
+                    graph.layout.algorithm = GraphLayout.ModularMultilevelMixer;
+                    break;
+                case 26:
+                    graph.layout.algorithm = GraphLayout.MultilevelLayout;
+                    break;
+                case 27:
+                    graph.layout.algorithm = GraphLayout.PlanarDrawLayout;
+                    break;
+                case 28:
+                    graph.layout.algorithm = GraphLayout.PlanarStraightLayout;
+                    break;
+                case 29:
+                    graph.layout.algorithm = GraphLayout.PlanarizationGridLayout;
+                    break;
+                case 30:
+                    graph.layout.algorithm = GraphLayout.PlanarizationLayout;
+                    break;
+                case 31:
+                    graph.layout.algorithm = GraphLayout.PreprocessorLayout;
+                    break;
+                case 32:
+                    graph.layout.algorithm = GraphLayout.RadialTreeLayout;
+                    break;
+                case 33:
+                    graph.layout.algorithm = GraphLayout.ScalingLayout;
+                    break;
+                case 34:
+                    graph.layout.algorithm = GraphLayout.SchnyderLayout;
+                    break;
+                case 35:
+                    graph.layout.algorithm = GraphLayout.SpringEmbedderFR;
+                    break;
+                case 36:
+                    graph.layout.algorithm = GraphLayout.SpringEmbedderFRExact;
+                    break;
+                case 37:
+                    graph.layout.algorithm = GraphLayout.SpringEmbedderKK;
+                    break;
+                case 38:
+                    graph.layout.algorithm = GraphLayout.StressMajorization;
+                    break;
+                case 39:
+                    graph.layout.algorithm = GraphLayout.SugiyamaLayout;
+                    break;
+                case 40:
+                    graph.layout.algorithm = GraphLayout.TreeLayout;
+                    break;
+                case 41:
+                    graph.layout.algorithm = GraphLayout.TutteLayout;
+                    break;
+                case 42:
+                    graph.layout.algorithm = GraphLayout.UpwardPlanarizationLayout;
+                    break;
+                case 43:
+                    graph.layout.algorithm = GraphLayout.VisibilityLayout;
                     break;
                 default:
                     console.log("NYI: execute " + index.toString());
