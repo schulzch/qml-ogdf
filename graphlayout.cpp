@@ -47,8 +47,8 @@
 #include "ogdf/upward/VisibilityLayout.h"
 #include <QQmlInfo>
 
-#define CREATE_MODULE(name) case name##: \
-    layout = new ogdf::##name(); \
+#define CREATE_MODULE(name) case name: \
+    layout = new ogdf::name(); \
     break
 
 GraphLayout::GraphLayout(QObject *parent)
