@@ -54,7 +54,7 @@ function random(index) {
     }
     // Assign size to every node.
     graph.eachNode(function(index) {
-        graph.modifyNode(index, { width: 50, height: 20 });
+        graph.modifyNode(index, { width: 50, height: 27 });
     });
 }
 

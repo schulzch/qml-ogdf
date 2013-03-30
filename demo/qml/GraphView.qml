@@ -99,9 +99,21 @@ CanvasView {
                     }
                 }
                 Text {
-                    anchors.centerIn: parent
+                    id: indexLabel
+                    anchors.top: parent.top
+                    anchors.topMargin: 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    font.pixelSize: 12
                     color: "#ffffff"
                     text: model.index
+                }
+                Text {
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    font.pixelSize: 8
+                    color: "#ffffff"
+                    text: model.x.toFixed(0) + " " + model.y.toFixed(0)
                 }
             }
         }
