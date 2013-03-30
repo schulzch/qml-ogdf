@@ -1,15 +1,24 @@
 # OGDF for QML
 
-This plug-in provides a binding of [Open Graph Drawing Framework](http://www.ogdf.net) to [QtQML](http://qt-project.org/doc/qt-5.0/qtqml/qtqml-index.html).
+This plug-in provides a binding of [Open Graph Drawing Framework](http://www.ogdf.net) (Version 2012.07) to [QtQML](http://qt-project.org/doc/qt-5.0/qtqml/qtqml-index.html) (Version 5.0+).
 
 *Note: it's is quite useable, but far from mature (read: APIs may change)!*
 
 ## Features
 
-- A wide range of graph drawing and layout algorithms
-    - FMMM
-    - More available, but not bound (TODO)
-- A module mechanism to reuse and replace particular algorithm phases (TODO)
+- A wide range of [layout algorithms](http://www.ogdf.net/doku.php/tech:layouter) such as
+    - Orthogonal and polyline layouts
+    - Multilevel layouts
+    - Energy-based layouts
+    - Upward layouts
+    - Planar layouts
+    - Tree layouts
+    - etc.
+- Various generators for
+	- Random graphs
+	- Random trees
+	- Random hierarchies
+	- etc.
 - Easy to use - it's QML after all
 
 ## Building
@@ -27,7 +36,7 @@ It's worth mentioning that `Unix Makefiles` can be replaced with your favorite C
 
 ## Quick Start
 
-Once build, you can start `ogdf-demo` to find out what algorithms are available and how to use them.
+Once build, you can start `ogdf-demo` to find out what algorithms are available and how you want to use them to solve your problem.
 
 To use the plug-in in your own project, you need to compile an `OGDF` directory and copy it to your application's working directory as follows:
 
@@ -36,6 +45,14 @@ To use the plug-in in your own project, you need to compile an `OGDF` directory 
       libogdfplugin.dylib -- compiled plug-in (OS X only)
       ogdfplugin.dll      -- compiled plug-in (Windows only)
       qmldir              -- module definition file
+
+## Whats next?
+
+Here are some quick links to help you get started:
+
+- [Introduction](https://github.com/schulzch/qml-ogdf/wiki/Introduction)
+- [Bug Tracker](https://github.com/schulzch/qml-ogdf/issues)
+- [OGDF Forums](http://www.ogdf.net/forum/)
 
 ## License
 
