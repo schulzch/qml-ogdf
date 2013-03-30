@@ -20,15 +20,9 @@
 //p.pushBack(ogdf::DPoint(20*e->index(),10));
 
 Graph::Graph(QObject *parent)
-    : QObject(parent),
-      m_graph(),
-      m_attributes(m_graph, ogdf::GraphAttributes::nodeGraphics |
-                   ogdf::GraphAttributes::edgeGraphics),
-      m_activeLoops(0),
-      m_layoutValid(false),
-      m_layout(new GraphLayout()),
-      m_nodes(&m_attributes),
-      m_edges(&m_attributes)
+    : QObject(parent), m_graph(), m_attributes(m_graph), m_activeLoops(0),
+      m_layoutValid(false), m_layout(new GraphLayout()),
+      m_nodes(&m_attributes), m_edges(&m_attributes)
 {
 }
 

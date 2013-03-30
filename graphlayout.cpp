@@ -45,6 +45,7 @@
 #include "ogdf/upward/DominanceLayout.h"
 #include "ogdf/upward/UpwardPlanarizationLayout.h"
 #include "ogdf/upward/VisibilityLayout.h"
+#include <QDebug>
 
 #define CREATE_MODULE(name) case name##: \
     layout = new ogdf::##name(); \
@@ -130,7 +131,18 @@ void GraphLayout::setEnabled(bool enabled)
 
 void GraphLayout::call(ogdf::GraphAttributes &attribtues)
 {
-    if (m_enabled) {
+    if (!m_enabled) {
+        return;
+    }
+    try {
         m_layout->call(attribtues);
+    } catch (ogdf::AlgorithmFailureException &e) {
+        qCritical() << "ogdf::AlgorithmFailureException" << e.file() << ":" << e.line();
+    } catch (ogdf::PreconditionViolatedException &e) {
+        qCritical() << "ogdf::PreconditionViolatedException" << e.file() << ":" << e.line();
+    } catch (ogdf::Exception &e) {
+        qCritical() << "ogdf::Exception" << e.file() << ":" << e.line();
+    } catch (...) {
+        qCritical() << "Unknown exception caught while layouting";
     }
 }
