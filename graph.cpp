@@ -53,11 +53,13 @@ void Graph::randomGraph(int n, int m)
     invalidateLayout();
 }
 
-bool Graph::randomSimpleGraph(int n, int m)
+void Graph::randomSimpleGraph(int n, int m)
 {
-    bool success = ogdf::randomSimpleGraph(m_graph, n, m);
-    invalidateLayout();
-    return success;
+    if (ogdf::randomSimpleGraph(m_graph, n, m)) {
+        invalidateLayout();
+    } else {
+        qmlInfo(this) << "Parameters will not permit a simple graph";
+    }
 }
 
 void Graph::randomBiconnectedGraph(int n, int m)

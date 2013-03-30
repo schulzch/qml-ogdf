@@ -26,7 +26,7 @@ Rectangle {
         repeat: false
         onTriggered: {
             // Setup initial state (the hackish way).
-            graphTools.model.execute(0);
+            graphTools.model.execute(1);
         }
     }
     Graph {

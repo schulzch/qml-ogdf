@@ -13,8 +13,8 @@
  */
 
 function random(index) {
-    var n = 10;
-    var m = 20;
+    var n = (Math.random() * 10 + 5) | 0;
+    var m = (Math.random() * 10 + (n + 1)) | 0;
     var p = 0.618;
     switch (index) {
     case 0:
