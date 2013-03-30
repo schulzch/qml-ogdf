@@ -43,15 +43,17 @@ CanvasView {
                 antialiasing: true
                 onPaint: {
                     var context = getContext('2d');
+                    context.save();
                     context.strokeStyle = '#ffffff';
                     context.lineWidth = 1;
                     context.beginPath();
                     context.moveTo(sourceX - x, sourceY - y);
-                    for (var bend in model.bends) {
-                        //context.lineTo(bend.x - x, bend.y - y);
-                    }
+                    //for (var bend in model.bends) {
+                    //    context.lineTo(bend.x - x, bend.y - y);
+                    //}
                     context.lineTo(targetX - x, targetY - y);
                     context.stroke();
+                    context.restore();
                 }
                 Behavior on sourceX {
                     NumberAnimation {
