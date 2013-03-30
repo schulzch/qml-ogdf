@@ -499,8 +499,10 @@ void UpwardPlanRep::computeSinkSwitches()
 	forall_faces(f, m_Gamma) {
 		List<adjEntry> switches = sinkSwitches[f];
 		ListIterator<adjEntry> it = switches.begin();
-		for (it = it.succ(); it.valid(); it++) {
-			m_sinkSwitchOf[(*it)->theNode()] = (*it);
+		if (it.valid()) {
+			for (it = it.succ(); it.valid(); it++) {
+				m_sinkSwitchOf[(*it)->theNode()] = (*it);
+			}
 		}
 	}
 }
