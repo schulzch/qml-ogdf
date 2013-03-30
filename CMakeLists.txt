@@ -53,7 +53,7 @@ file(GLOB DEMO_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 file(GLOB DEMO_QRC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "demo/main.qrc")
 file(GLOB DEMO_QML RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "demo/qml/*.qml")
+    "demo/qml/*.qml" "demo/qml/*.js")
 qt5_add_resources(DEMO_QRC_SOURCES "demo/main.qrc")
 add_executable(ogdf-demo WIN32 "demo/main.cpp" ${DEMO_QRC_SOURCES} ${DEMO_QML})
 target_link_libraries(ogdf-demo ${Qt5Core_QTMAIN_LIBRARIES})

@@ -24,6 +24,8 @@ Graph::Graph(QObject *parent)
       m_layoutValid(false), m_layout(new GraphLayout()),
       m_nodes(&m_attributes), m_edges(&m_attributes)
 {
+    connect(m_layout.data(), &GraphLayout::algorithmChanged,
+            this, &Graph::invalidateLayout);
 }
 
 Graph::~Graph()

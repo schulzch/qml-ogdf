@@ -5,5 +5,6 @@
         <file>qml/GraphTools.qml</file>
         <file>qml/GraphView.qml</file>
         <file>qml/main.qml</file>
+        <file>qml/main.js</file>
     </qresource>
 </RCC>

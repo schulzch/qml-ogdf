@@ -61,9 +61,11 @@ public:
 
     Q_INVOKABLE void clear();
 
+private slots:
+    void invalidateLayout();
+
 private:
     Q_DISABLE_COPY(Graph)
-    void invalidateLayout();
     QJSValue nodeAttributes(ogdf::node v);
     void setNodeAttributes(ogdf::node v, QJSValue object);
 
