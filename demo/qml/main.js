@@ -14,7 +14,7 @@
 
 function random(index) {
     var n = (Math.random() * 10 + 5) | 0;
-    var m = (Math.random() * 10 + (n + 1)) | 0;
+    var m = Math.max(n + 1, (Math.random() * n * (n - 1) / 2) | 0);
     var p = 0.618;
     switch (index) {
     case 0:
