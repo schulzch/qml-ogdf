@@ -47,6 +47,16 @@
 #include "ogdf/upward/VisibilityLayout.h"
 #include <QQmlInfo>
 
+// Enable to get *.gml files for each layout, that crashes or hangs.
+#define DEBUG_LAYOUTS QT_DEBUG
+
+#ifdef DEBUG_LAYOUTS
+#include <QMetaEnum>
+#include <QDateTime>
+#include <QDebug>
+#include <QFile>
+#endif
+
 #define CREATE_MODULE(name) case name: \
     layout = new ogdf::name(); \
     break
@@ -135,7 +145,21 @@ void GraphLayout::call(ogdf::GraphAttributes &attribtues)
         return;
     }
     try {
+#ifdef DEBUG_LAYOUTS
+        // Write debug file for later debugging.
+        QDateTime utcTime = QDateTime::currentDateTimeUtc();
+        QMetaEnum algorithmEnum = metaObject()->enumerator(0);
+        QString debugCallFilename = QString("call_%1_%2.gml")
+                .arg(utcTime.toString("yyyy-MM-dd_hh-mm-ss"))
+                .arg(algorithmEnum.valueToKey(m_algorithm));
+        qDebug() << "GraphLayout:" << debugCallFilename;
+        attribtues.constGraph().writeGML(debugCallFilename.toLatin1().data());
+#endif
         m_layout->call(attribtues);
+#ifdef DEBUG_LAYOUTS
+        // Delete debug file, if call did not crash.
+        QFile::remove(debugCallFilename);
+#endif
     } catch (ogdf::AlgorithmFailureException &e) {
         QString reason = QString("of an unknown reason (%1)").arg(e.exceptionCode());
         switch (e.exceptionCode()) {
