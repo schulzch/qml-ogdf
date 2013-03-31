@@ -39,7 +39,7 @@ It's worth mentioning that `Unix Makefiles` can be replaced with your favorite C
 Once build, you can start `ogdf-demo` to find out what algorithms are available and how you want to use them to solve your problem.
 
 <p align="center">
-  <img src="demo/screenshot.png" alt="OGDF Demo Screenshot">
+  <iframe width="640" height="360" src="http://www.youtube.com/embed/ZOw1eOYFumo?rel=0" frameborder="0" allowfullscreen></iframe>
 </p>
 
 To use the plug-in in your own project, you need to compile an `OGDF` directory and copy it to your application's working directory as follows:
