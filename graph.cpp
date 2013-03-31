@@ -58,7 +58,8 @@ void Graph::randomSimpleGraph(int n, int m)
     if (ogdf::randomSimpleGraph(m_graph, n, m)) {
         invalidateLayout();
     } else {
-        qmlInfo(this) << "Parameters will not permit a simple graph";
+        qmlInfo(this) << "Can not generate a simple graph from"
+                      << n << "nodes and" << m << "edges";
     }
 }
 

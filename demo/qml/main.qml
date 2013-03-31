@@ -20,15 +20,6 @@ Rectangle {
     width: 800
     height: 600
     color: "#272822"
-    Timer {
-        interval: 0
-        running: true
-        repeat: false
-        onTriggered: {
-            // Setup initial state (the hackish way).
-            graphTools.model.execute(1);
-        }
-    }
     Graph {
         id: graph
     }
@@ -38,7 +29,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         width: 150
+        selectedIndex: 2
         model: ListModel {
+            ListElement { caption: "Iterate" }
             ListElement { caption: "Random" }
             ListElement { caption: "Random/Simple" }
             ListElement { caption: "Random/Biconnected" }
@@ -47,8 +40,6 @@ Rectangle {
             ListElement { caption: "Random/Tree/Width" }
             ListElement { caption: "Random/Hierarchy" }
             ListElement { caption: "Random/DiGraph" }
-            ListElement { caption: "Iterate/Nodes" }
-            ListElement { caption: "Iterate/Edges" }
             ListElement { caption: "Layout/Balloon" }
             ListElement { caption: "Layout/Circular" }
             ListElement { caption: "Layout/ComponentSplitter" }
@@ -84,12 +75,12 @@ Rectangle {
             ListElement { caption: "Layout/UpwardPlanarization" }
             ListElement { caption: "Layout/Visibility" }
             function execute(index) {
-                if (index <= 7) {
-                    Controller.random(index);
-                } else if (index <= 9) {
-                    Controller.iterator(index);
+                if (index === 0) {
+                    Controller.iterate();
+                } else if (index - 1 <= 7) {
+                    Controller.random(index - 1);
                 } else {
-                    Controller.layout(index);
+                    Controller.layout(index - 8);
                 }
             }
         }

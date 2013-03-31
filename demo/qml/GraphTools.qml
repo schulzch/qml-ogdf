@@ -19,6 +19,7 @@ ShaderEffect {
     property point location: Qt.point(x, y)
     property point size: Qt.point(width, height)
     property alias model: menuView.model
+    property alias selectedIndex: menuView.selectedIndex
     width: 200
     height: 40
     fragmentShader:
@@ -61,8 +62,8 @@ ShaderEffect {
     }
     Text {
         id: forQMLLabel
-        anchors.right: ogdfLabel.right
         anchors.top: ogdfLabel.bottom
+        anchors.right: ogdfLabel.right
         font.family: "Arial,Verdana,sans-serif"
         font.bold: true
         font.pixelSize: 15
@@ -72,6 +73,8 @@ ShaderEffect {
     }
     ListView {
         id: menuView
+        property bool hovering: false
+        property int selectedIndex: -1
         anchors.top: forQMLLabel.bottom
         anchors.left: parent.left
         anchors.bottom: parent.bottom
@@ -80,13 +83,14 @@ ShaderEffect {
         currentIndex: -1
         boundsBehavior: Flickable.StopAtBounds
         spacing: 6
+        clip: true
         delegate: Text {
             x: 6
             width: menuView.width - 12
             font.family: "Arial,Verdana,sans-serif"
-            font.bold: true
+            font.bold: menuView.selectedIndex == index
             font.pixelSize: 12
-            color: menuView.currentIndex == index ? "#ffffff" : "#66666666"
+            color: menuView.selectedIndex == index ? "#ffffff" : "#66ffffff"
             text: model.caption
             clip: true
             MouseArea {
@@ -94,14 +98,16 @@ ShaderEffect {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    menuView.model.execute(index);
+                    menuView.selectedIndex = index;
                 }
                 onEntered: {
+                    menuView.hovering = true;
                     menuView.focus = true;
                     menuView.currentIndex = index;
                 }
                 onExited: {
-                    menuView.currentIndex = -1;
+
+                    menuView.hovering = false;
                 }
             }
         }
@@ -111,6 +117,19 @@ ShaderEffect {
             height: 20
             radius: 3
             color: "#66666666"
+        }
+        onCurrentIndexChanged: {
+            if (!hovering) {
+                selectedIndex = currentIndex;
+            }
+        }
+        onSelectedIndexChanged: {
+            model.execute(selectedIndex);
+            currentIndex = selectedIndex;
+        }
+        onModelChanged: {
+            model.execute(selectedIndex);
+            currentIndex = selectedIndex;
         }
         Item {
             id: scrollArea
@@ -127,6 +146,15 @@ ShaderEffect {
                 height: menuView.visibleArea.heightRatio * parent.height
                 width: parent.width
                 color: "#99999999"
+            }
+        }
+        Timer {
+            id: randomTimer
+            interval: 2000
+            running: false//TODO: enable, when bugs are fixed !menuView.hovering
+            repeat: true
+            onTriggered: {
+                menuView.selectedIndex = Math.round(Math.random() * menuView.model.count);
             }
         }
     }
