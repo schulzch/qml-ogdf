@@ -23,7 +23,7 @@ This plug-in provides a binding of [Open Graph Drawing Framework](http://www.ogd
 
 ## Building
 
-You need to have a C++ compiler, [Qt 5.0+](https://qt-project.org/downloads) and [CMake 2.8.10+](http://www.cmake.org/) installed. 
+You need to have a C++ compiler, [Qt 5.0+](https://qt-project.org/downloads) and [CMake 2.8.10+](http://www.cmake.org/) installed.
 
 Start [Qt Creator](http://qt-project.org/downloads#qt-creator), open `CMakeLists.txt` as new project, follow the instructions, hit compile and you're done. Alternatively you can use CMake from the command line as follows:
 
@@ -38,7 +38,9 @@ It's worth mentioning that `Unix Makefiles` can be replaced with your favorite C
 
 Once build, you can start `ogdf-demo` to find out what algorithms are available and how you want to use them to solve your problem.
 
-<img src="demo/screenshot.png" alt="OGDF Demo Screenshot">
+<p align="center">
+  <img src="demo/screenshot.png" alt="OGDF Demo Screenshot">
+</p>
 
 To use the plug-in in your own project, you need to compile an `OGDF` directory and copy it to your application's working directory as follows:
 
