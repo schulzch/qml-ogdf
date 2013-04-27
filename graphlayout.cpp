@@ -13,7 +13,7 @@
  */
 #include "graphlayout.h"
 #include "ogdf/basic/PreprocessorLayout.h"
-#include "ogdf/energybased/CoinTutteLayout.h"
+#include "ogdf/energybased/TutteLayout.h"
 #include "ogdf/energybased/DavidsonHarelLayout.h"
 #include "ogdf/energybased/FMMMLayout.h"
 #include "ogdf/energybased/FastMultipoleEmbedder.h"
@@ -22,7 +22,7 @@
 #include "ogdf/energybased/SpringEmbedderFR.h"
 #include "ogdf/energybased/SpringEmbedderFRExact.h"
 #include "ogdf/energybased/SpringEmbedderKK.h"
-#include "ogdf/energybased/StressMajorizationSimple.h"
+#include "ogdf/energybased/StressMinimization.h"
 #include "ogdf/energybased/multilevelmixer/MMMExampleFastLayout.h"
 #include "ogdf/energybased/multilevelmixer/MMMExampleNiceLayout.h"
 #include "ogdf/energybased/multilevelmixer/MMMExampleNoTwistLayout.h"
@@ -48,7 +48,7 @@
 #include <QQmlInfo>
 
 // Enable to get *.gml files for each layout, that crashes or hangs.
-#define DEBUG_LAYOUTS QT_DEBUG
+//#define DEBUG_LAYOUTS QT_DEBUG
 
 #ifdef DEBUG_LAYOUTS
 #include <QMetaEnum>
@@ -112,7 +112,7 @@ void GraphLayout::setAlgorithm(Algorithm algorithm)
     CREATE_MODULE(SpringEmbedderFR);
     CREATE_MODULE(SpringEmbedderFRExact);
     CREATE_MODULE(SpringEmbedderKK);
-    CREATE_MODULE(StressMajorization);
+    CREATE_MODULE(StressMinimization);
     CREATE_MODULE(SugiyamaLayout);
     CREATE_MODULE(TreeLayout);
     CREATE_MODULE(TutteLayout);

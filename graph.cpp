@@ -237,5 +237,5 @@ void Graph::setNodeAttributes(ogdf::node v, QJSValue object)
     m_attributes.y(v) = object.property("y").toNumber();
     m_attributes.width(v) = object.property("width").toNumber();
     m_attributes.height(v) = object.property("height").toNumber();
-    m_attributes.shapeNode(v) = ogdf::GraphAttributes::rectangle;
+    m_attributes.shape(v) = ogdf::shRect;
 }

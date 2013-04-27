@@ -56,7 +56,7 @@ public:
         SpringEmbedderFR,
         SpringEmbedderFRExact,
         SpringEmbedderKK,
-        StressMajorization,
+        StressMinimization,
         SugiyamaLayout,
         TreeLayout,
         TutteLayout,
