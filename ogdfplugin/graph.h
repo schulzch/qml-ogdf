@@ -21,6 +21,7 @@
 #include "graphlayout.h"
 #include "ogdf/basic/Graph.h"
 #include "ogdf/basic/GraphAttributes.h"
+#include "ogdf/basic/NodeArray.h"
 
 /**
  * @brief The Graph class
@@ -71,11 +72,12 @@ private:
 
     ogdf::Graph m_graph;
     ogdf::GraphAttributes m_attributes;
-    int m_activeLoops;
-    bool m_layoutValid;
-    QScopedPointer<GraphLayout> m_layout;
+    ogdf::NodeArray<QObject*> m_objects;
     NodeModel m_nodes;
     EdgeModel m_edges;
+    QScopedPointer<GraphLayout> m_layout;
+    int m_activeLoops;
+    bool m_layoutValid;
 };
 
 #endif

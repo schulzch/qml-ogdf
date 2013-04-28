@@ -18,6 +18,8 @@
 #include "graph.h"
 #include <QtQml>
 
+QQmlEngine *g_engine = 0;
+
 void OGDFPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(QLatin1String(uri) == QLatin1String("OGDF"));
@@ -25,4 +27,10 @@ void OGDFPlugin::registerTypes(const char *uri)
     qmlRegisterUncreatableType<EdgeModel>(uri, 1, 0, "EdgeModel", QString());
     qmlRegisterUncreatableType<GraphLayout>(uri, 1, 0, "GraphLayout", QString());
     qmlRegisterType<Graph>(uri, 1, 0, "Graph");
+}
+
+void OGDFPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
+{
+    Q_UNUSED(uri);
+    g_engine = engine;
 }
