@@ -34,6 +34,9 @@ if(WIN32)
         "_CRT_SECURE_NO_WARNINGS"
         "_SCL_SECURE_NO_WARNINGS")
     target_link_libraries(ogdfplugin "Psapi.lib")
+else()
+    list(APPEND OGDF_DEFINES
+        "HAVE_CONFIG_H")
 endif()
 set_target_properties(ogdfplugin PROPERTIES
     COMPILE_DEFINITIONS "${OGDF_DEFINES}")

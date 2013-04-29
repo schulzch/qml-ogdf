@@ -48,9 +48,10 @@
 #include <QQmlInfo>
 
 // Enable to get *.gml files for each layout, that crashes or hangs.
-//#define DEBUG_LAYOUTS QT_DEBUG
+//#define CRASH_DUMP_GRAPHS QT_DEBUG
 
-#ifdef DEBUG_LAYOUTS
+#ifdef CRASH_DUMP_GRAPHS
+#include "ogdf/fileformats/GraphIO.h"
 #include <QMetaEnum>
 #include <QDateTime>
 #include <QDebug>
@@ -145,7 +146,7 @@ void GraphLayout::call(ogdf::GraphAttributes &attribtues)
         return;
     }
     try {
-#ifdef DEBUG_LAYOUTS
+#ifdef CRASH_DUMP_GRAPHS
         // Write debug file for later debugging.
         QDateTime utcTime = QDateTime::currentDateTimeUtc();
         QMetaEnum algorithmEnum = metaObject()->enumerator(0);
@@ -153,10 +154,10 @@ void GraphLayout::call(ogdf::GraphAttributes &attribtues)
                 .arg(utcTime.toString("yyyy-MM-dd_hh-mm-ss"))
                 .arg(algorithmEnum.valueToKey(m_algorithm));
         qDebug() << "GraphLayout:" << debugCallFilename;
-        attribtues.constGraph().writeGML(debugCallFilename.toLatin1().data());
+        ogdf::GraphIO::writeGML(attribtues, debugCallFilename.toLatin1().data());
 #endif
         m_layout->call(attribtues);
-#ifdef DEBUG_LAYOUTS
+#ifdef CRASH_DUMP_GRAPHS
         // Delete debug file, if call did not crash.
         QFile::remove(debugCallFilename);
 #endif
