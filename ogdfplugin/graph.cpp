@@ -13,8 +13,6 @@
  */
 #include "graph.h"
 #include "ogdf/basic/graph_generators.h"
-#include "ogdfplugin.h"
-#include <QQmlEngine>
 #include <QQmlInfo>
 
 //ogdf::DPolyline &p = m_attributes.bends(e);
@@ -22,11 +20,10 @@
 //p.pushBack(ogdf::DPoint(20*e->index(),10));
 
 Graph::Graph(QObject *parent)
-    : QObject(parent), m_graph(), m_attributes(m_graph), m_objects(m_graph),
-      m_nodes(&m_attributes), m_edges(&m_attributes),
-      m_layout(new GraphLayout()), m_activeLoops(0), m_layoutValid(false)
+    : QObject(parent), m_graph(), m_attributes(m_graph), m_activeLoops(0),
+      m_layoutValid(false), m_layout(new GraphLayout()),
+      m_nodes(&m_attributes), m_edges(&m_attributes)
 {
-
     connect(m_layout.data(), &GraphLayout::algorithmChanged,
             this, &Graph::invalidateLayout);
 }
@@ -231,7 +228,6 @@ QJSValue Graph::nodeAttributes(ogdf::node v)
     object.setProperty("y", m_attributes.y(v));
     object.setProperty("width", m_attributes.width(v));
     object.setProperty("height", m_attributes.height(v));
-    object.setProperty("object", g_engine->toScriptValue(m_objects[v]));
     return object;
 }
 
@@ -242,5 +238,4 @@ void Graph::setNodeAttributes(ogdf::node v, QJSValue object)
     m_attributes.width(v) = object.property("width").toNumber();
     m_attributes.height(v) = object.property("height").toNumber();
     m_attributes.shape(v) = ogdf::shRect;
-    m_objects[v] = object.property("object").toQObject();
 }
