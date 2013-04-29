@@ -48,7 +48,7 @@
 #include <QQmlInfo>
 
 // Enable to get *.gml files for each layout, that crashes or hangs.
-#define CRASH_DUMP_GRAPHS QT_DEBUG
+//#define CRASH_DUMP_GRAPHS QT_DEBUG
 
 #ifdef CRASH_DUMP_GRAPHS
 #include "ogdf/fileformats/GraphIO.h"
