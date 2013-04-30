@@ -28,7 +28,7 @@
 class Graph : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool autoLayout READ autoLayout  NOTIFY autoLayoutChanged)
+    Q_PROPERTY(bool autoLayout READ autoLayout WRITE setAutoLayout NOTIFY autoLayoutChanged)
     Q_PROPERTY(GraphLayout *layout READ layout CONSTANT)
     Q_PROPERTY(NodeModel *nodes READ nodes CONSTANT)
     Q_PROPERTY(EdgeModel *edges READ edges CONSTANT)

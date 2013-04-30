@@ -47,6 +47,7 @@ void Graph::setAutoLayout(bool autoLayout)
             m_layoutLock++;
         }
         emit autoLayoutChanged();
+        invalidateLayout();
     }
 }
 
