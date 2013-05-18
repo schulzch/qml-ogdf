@@ -235,6 +235,7 @@ void Graph::invalidateLayout()
     m_layoutValid = false;
     if (m_layout && m_layoutLock == 0) {
         m_layout->call(m_attributes);
+        m_attributes.addNodeCenter2Bends();
         m_nodes.attributesChanged();
         m_edges.attributesChanged();
         m_layoutValid = true;
