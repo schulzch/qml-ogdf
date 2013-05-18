@@ -1,9 +1,9 @@
 /*
- * $Revision: 3362 $
+ * $Revision: 3504 $
  *
  * last checkin:
- *   $Author: zeranski $
- *   $Date: 2013-04-03 12:00:54 +0200 (Mi, 03. Apr 2013) $
+ *   $Author: beyer $
+ *   $Date: 2013-05-16 14:49:39 +0200 (Do, 16. Mai 2013) $
  ***************************************************************/
 
 /** \file
@@ -95,7 +95,7 @@ public:
 	//! Returns the number of possible embeddings of the skeleton of node \a vT.
 	/**
 	 * \pre \a vT is a node in \a T
-	 * Returns 1 if vT is a S-node, 2 if vT is a R-node, and (#edges of the sekeleton - 1)! if vT is a P-node.
+	 * Returns 1 if vT is a S-node, 2 if vT is a R-node, and (number of edges in the sekeleton - 1)! if vT is a P-node.
 	 */
 	double numberOfNodeEmbeddings(node vT);
 
@@ -141,13 +141,13 @@ public:
 		randomEmbed();
 		embed(G);
 	}
-	
+
 	//! Embeds the original graph \a G canonically by the indices of their adjEntries.
 	/**
 	 * \pre \a G is the graph passed to the constructor of \a T
 	 */
 	void firstEmbedding(Graph &G);
-	
+
 	//! Embeds the original graph \a G with the next embedding.
 	/**
 	 * It returns \a false iff there is no feasible (planar) embedding left
@@ -155,10 +155,10 @@ public:
 	 * \pre \a G is the graph passed to the constructor of \a T
 	 */
 	bool nextEmbedding(Graph &G);
-	
+
 	//! Embeds the skeleton of the node vT with the specific embedding numbered by x.
 	/**
-	 * \pre To work correctly vT has to be a node of the SPQR-tree and 0 \le x \le # of embeddings of vT's skeleton
+	 * \pre To work correctly vT has to be a node of the SPQR-tree and 0 &le; x &le; number of embeddings of vT's skeleton
 	 * \pre It does not work at the same time with firstEmbedding and nextEmbedding
 	 */
 	void embed(node &vT, int x);
@@ -181,15 +181,15 @@ protected:
 		adjEntry adjVirt,
 		SListPure<adjEntry> &adjEdges);
 	void createInnerVerticesEmbed(Graph &G, node vT);
-	
+
 	// Enumeration of all embeddings
 	void firstEmbedding(node &vT);
-	void reverse(node &nP, 
-		adjEntry &first, 
+	void reverse(node &nP,
+		adjEntry &first,
 		adjEntry &last);
 	bool nextEmbedding(node &vT);
 	bool nextEmbedding(ListIterator<node> it);
-	
+
 	bool m_finished;
 
 }; // class PlanarSPQRTree
