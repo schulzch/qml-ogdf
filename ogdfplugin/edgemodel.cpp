@@ -73,6 +73,9 @@ QVariant EdgeModel::data(const QModelIndex &index, int role) const
     case BendsRole: {
         QVariantList points;
         ogdf::DPolyline &bends = m_attributes->bends(e);
+        if (bends.size() == 0) {
+            m_attributes->addNodeCenter2Bends();
+        }
         ogdf::DPolyline::const_iterator bend;
         for (bend = bends.begin(); bend != bends.end(); bend++) {
             points.append(QPointF((*bend).m_x, (*bend).m_y));
