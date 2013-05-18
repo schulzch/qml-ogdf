@@ -17,8 +17,8 @@ import "main.js" as Controller
 
 Rectangle {
     id: container
-    width: 800
-    height: 600
+    width: 1024
+    height: 768
     color: "#272822"
     Graph {
         id: graph

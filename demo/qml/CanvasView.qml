@@ -65,8 +65,8 @@ Flickable {
     }
     Item {
         id: viewInner
-        x: -childrenRect.x * 2
-        y: -childrenRect.y * 2
+        x: childrenRect.width < view.width ? (view.width - childrenRect.width) / 2 : -childrenRect.x * 2
+        y: childrenRect.height < view.height ? (view.height - childrenRect.height) / 2 : -childrenRect.y * 2
         width: childrenRect.width
         height: childrenRect.height
     }
