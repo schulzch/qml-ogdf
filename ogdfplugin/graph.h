@@ -28,6 +28,7 @@
 class Graph : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool autoLayout READ autoLayout WRITE setAutoLayout NOTIFY autoLayoutChanged)
     Q_PROPERTY(GraphLayout *layout READ layout CONSTANT)
     Q_PROPERTY(NodeModel *nodes READ nodes CONSTANT)
     Q_PROPERTY(EdgeModel *edges READ edges CONSTANT)
@@ -35,10 +36,13 @@ public:
     Graph(QObject *parent = 0);
     ~Graph();
 
-    NodeModel *nodes();
-    EdgeModel *edges();
+    bool autoLayout() const;
+    void setAutoLayout(bool autoLayout);
 
     GraphLayout *layout() const;
+
+    NodeModel *nodes();
+    EdgeModel *edges();
 
     Q_INVOKABLE void randomGraph(int n, int m);
     Q_INVOKABLE void randomSimpleGraph(int n, int m);
@@ -61,6 +65,9 @@ public:
 
     Q_INVOKABLE void clear();
 
+signals:
+    void autoLayoutChanged();
+
 private slots:
     void invalidateLayout();
 
@@ -71,7 +78,8 @@ private:
 
     ogdf::Graph m_graph;
     ogdf::GraphAttributes m_attributes;
-    int m_activeLoops;
+    bool m_autoLayout;
+    int m_layoutLock;
     bool m_layoutValid;
     QScopedPointer<GraphLayout> m_layout;
     NodeModel m_nodes;

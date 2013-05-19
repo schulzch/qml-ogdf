@@ -20,8 +20,8 @@
 //p.pushBack(ogdf::DPoint(20*e->index(),10));
 
 Graph::Graph(QObject *parent)
-    : QObject(parent), m_graph(), m_attributes(m_graph), m_activeLoops(0),
-      m_layoutValid(false), m_layout(new GraphLayout()),
+    : QObject(parent), m_graph(), m_attributes(m_graph), m_autoLayout(true),
+      m_layoutLock(0), m_layoutValid(false), m_layout(new GraphLayout()),
       m_nodes(&m_attributes), m_edges(&m_attributes)
 {
     connect(m_layout.data(), &GraphLayout::algorithmChanged,
@@ -32,6 +32,31 @@ Graph::~Graph()
 {
 }
 
+bool Graph::autoLayout() const
+{
+    return m_autoLayout;
+}
+
+void Graph::setAutoLayout(bool autoLayout)
+{
+    if (autoLayout != m_autoLayout) {
+        m_autoLayout = autoLayout;
+        if (m_autoLayout) {
+            m_layoutLock--;
+        } else {
+            m_layoutLock++;
+        }
+        emit autoLayoutChanged();
+        invalidateLayout();
+    }
+}
+
+GraphLayout *Graph::layout() const
+{
+    return m_layout.data();
+}
+
+
 NodeModel *Graph::nodes()
 {
     return &m_nodes;
@@ -40,11 +65,6 @@ NodeModel *Graph::nodes()
 EdgeModel *Graph::edges()
 {
     return &m_edges;
-}
-
-GraphLayout *Graph::layout() const
-{
-    return m_layout.data();
 }
 
 void Graph::randomGraph(int n, int m)
@@ -115,12 +135,12 @@ void Graph::eachNode(QJSValue callback)
         QJSValueList arguments;
         arguments << QJSValue();
         ogdf::node v;
-        m_activeLoops++;
+        m_layoutLock++;
         forall_nodes (v, m_graph) {
             arguments[0] = v->index();
             callback.call(arguments);
         }
-        m_activeLoops--;
+        m_layoutLock--;
         if (!m_layoutValid) {
             invalidateLayout();
         }
@@ -180,12 +200,12 @@ void Graph::eachEdge(QJSValue callback)
         QJSValueList arguments;
         arguments << QJSValue();
         ogdf::edge e;
-        m_activeLoops++;
+        m_layoutLock++;
         forall_edges (e, m_graph) {
             arguments[0] = e->index();
             callback.call(arguments);
         }
-        m_activeLoops--;
+        m_layoutLock--;
         if (!m_layoutValid) {
             invalidateLayout();
         }
@@ -213,7 +233,7 @@ void Graph::clear()
 void Graph::invalidateLayout()
 {
     m_layoutValid = false;
-    if (m_layout && m_activeLoops == 0) {
+    if (m_layout && m_layoutLock == 0) {
         m_layout->call(m_attributes);
         m_nodes.attributesChanged();
         m_edges.attributesChanged();
