@@ -4,8 +4,8 @@
 #
 project(QML-OGDF)
 
-# Require CMake 2.8.10+ for Qt5 support.
-cmake_minimum_required(VERSION 2.8.10)
+# Require CMake 2.8.11+ for tweaked Qt5 support.
+cmake_minimum_required(VERSION 2.8.11)
 
 # Check for polluted source tree.
 if(EXISTS ${CMAKE_SOURCE_DIR}/CMakeCache.txt OR

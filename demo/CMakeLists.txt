@@ -2,7 +2,7 @@
 # CMake listfile to specify the build process, see:
 # http://www.cmake.org/cmake/help/documentation.html
 #
-project(OGDFDEMO)
+project(OGDF-DEMO)
 
 # Add QML OGDF demo target.
 file(GLOB DEMO_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -14,7 +14,7 @@ file(GLOB DEMO_QML RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 find_package(Qt5Quick REQUIRED)
 qt5_add_resources(DEMO_QRC_SOURCES "main.qrc")
 add_executable(ogdf-demo WIN32 "main.cpp" ${DEMO_QRC_SOURCES} ${DEMO_QML})
-target_link_libraries(ogdf-demo ${Qt5Core_QTMAIN_LIBRARIES})
+target_link_libraries(ogdf-demo)
 set_target_properties(ogdf-demo PROPERTIES PROJECT_LABEL "demo")
 qt5_use_modules(ogdf-demo Quick)
 
