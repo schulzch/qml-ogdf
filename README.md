@@ -23,7 +23,7 @@ This plug-in provides a binding of [Open Graph Drawing Framework](http://www.ogd
 
 ## Building
 
-You need to have a C++ compiler, [Qt 5.0+](https://qt-project.org/downloads) and [CMake 2.8.10+](http://www.cmake.org/) installed.
+You need to have a C++ compiler, [Qt 5.0+](https://qt-project.org/downloads) and [CMake 2.8.11+](http://www.cmake.org/) installed.
 
 There are many ways to [use CMake](http://www.cmake.org/cmake/help/runningcmake.html), but this is the easiest one: start [Qt Creator](http://qt-project.org/downloads#qt-creator), open `CMakeLists.txt` as new project, follow the instructions, hit build and you're done. 
 
