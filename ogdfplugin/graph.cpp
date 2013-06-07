@@ -15,10 +15,6 @@
 #include "ogdf/basic/graph_generators.h"
 #include <QQmlInfo>
 
-//ogdf::DPolyline &p = m_attributes.bends(e);
-//p.pushBack(ogdf::DPoint(10,20*e->index()));
-//p.pushBack(ogdf::DPoint(20*e->index(),10));
-
 Graph::Graph(QObject *parent)
     : QObject(parent), m_graph(), m_attributes(m_graph), m_autoLayout(true),
       m_layoutLock(0), m_layoutValid(false), m_layout(new GraphLayout()),
