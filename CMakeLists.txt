@@ -26,6 +26,11 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
         "\n  * Windows: cmake -G \"Visual Studio 10\" ..")
 endif()
 
+if(MSVC)
+    # /MP Enable build with multiple processes.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+endif()
+
 # Add sub-projects (order is important!)
 add_subdirectory(ogdfplugin)
 add_subdirectory(demo)
