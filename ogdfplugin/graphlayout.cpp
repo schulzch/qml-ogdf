@@ -68,10 +68,6 @@ GraphLayout::GraphLayout(QObject *parent)
 {
 }
 
-GraphLayout::~GraphLayout()
-{
-}
-
 GraphLayout::Algorithm GraphLayout::algorithm() const
 {
     return m_algorithm;

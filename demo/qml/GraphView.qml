@@ -75,48 +75,29 @@ CanvasView {
                     context.stroke();
                     context.restore();
                 }
-                Behavior on sourceX {
-                    NumberAnimation {
-                        duration: 500
-                    }
-                }
-                Behavior on sourceY {
-                    NumberAnimation {
-                        duration: 500
-                    }
-                }
-                Behavior on targetX {
-                    NumberAnimation {
-                        duration: 500
-                    }
-                }
-                Behavior on targetY {
-                    NumberAnimation {
-                        duration: 500
-                    }
-                }
             }
         }
         Repeater {
             model: graphView.graph.nodes
             delegate: Rectangle {
+                id: rect
                 x: model.x - model.width / 2
                 y: model.y - model.height / 2
-                width: model.width
-                height: model.height
+                width: 50
+                height: 27
                 color: "#49483e"
                 radius: 4
                 border.width: 1
                 border.color: "#af9476"
-                Behavior on x {
-                    NumberAnimation {
-                        duration: 500
-                    }
+                Binding {
+                    target: model
+                    property: "width"
+                    value: rect.width
                 }
-                Behavior on y {
-                    NumberAnimation {
-                        duration: 500
-                    }
+                Binding {
+                    target: model
+                    property: "height"
+                    value: rect.height
                 }
                 Text {
                     id: indexLabel

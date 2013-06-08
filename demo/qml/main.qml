@@ -28,7 +28,6 @@ Rectangle {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        width: 150
         selectedIndex: 2
         model: ListModel {
             ListElement { caption: "Iterate" }

@@ -20,8 +20,7 @@ ShaderEffect {
     property point size: Qt.point(width, height)
     property alias model: menuView.model
     property alias selectedIndex: menuView.selectedIndex
-    width: 200
-    height: 40
+    width: 275
     fragmentShader:
         "uniform highp vec2 location;" +
         "uniform highp vec2 size;" +
@@ -50,9 +49,9 @@ ShaderEffect {
     Text {
         id: ogdfLabel
         anchors.top: parent.top
-        anchors.topMargin: 6
+        anchors.topMargin: 10
         anchors.right: parent.right
-        anchors.rightMargin: 6
+        anchors.rightMargin: 25
         font.family: "Arial,Verdana,sans-serif"
         font.pixelSize: 30
         font.letterSpacing: 10
@@ -77,6 +76,7 @@ ShaderEffect {
         property int selectedIndex: -1
         anchors.top: forQMLLabel.bottom
         anchors.left: parent.left
+        anchors.leftMargin: 25
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         height: 14
@@ -91,7 +91,7 @@ ShaderEffect {
             font.bold: menuView.selectedIndex == index
             font.pixelSize: 12
             color: menuView.selectedIndex == index ? "#ffffff" : "#66ffffff"
-            text: model.caption
+            text: "» " + model.caption
             clip: true
             MouseArea {
                 anchors.fill: parent

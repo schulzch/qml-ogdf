@@ -18,28 +18,27 @@
 #include "ogdf/basic/GraphAttributes.h"
 #include "ogdf/basic/GraphObserver.h"
 
+class Graph;
+
 /**
- * @brief The Node class
+ * This class provides a list model for edges.
  */
 class EdgeModel : public QAbstractListModel, public ogdf::GraphObserver
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
-    //model API
     enum Roles {
-        SourceX = Qt::UserRole + 1,
-        SourceY,
-        TargetX,
-        TargetY,
+        SourceRole = Qt::UserRole + 1,
+        SourceXRole,
+        SourceYRole,
+        TargetRole,
+        TargetXRole,
+        TargetYRole,
         BendsRole
     };
 
-    EdgeModel(ogdf::GraphAttributes *attributes, QObject *parent = 0);
-    ~EdgeModel();
-
-    ogdf::edge edge(int index);
-    void attributesChanged();
+    EdgeModel(Graph *graph);
 
     // QAbstractListModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -54,8 +53,16 @@ public:
     void edgeAdded(ogdf::edge e);
     void edgeDeleted(ogdf::edge e);
 
+    // C++ API
+    void attributesChanged();
+
     // QML API
     int count() const;
+    Q_INVOKABLE QString get(int index) const;
+    Q_INVOKABLE QString getSource(int index) const;
+    Q_INVOKABLE QString getTarget(int index) const;
+    Q_INVOKABLE void insert(const QString &edge, const QString &source, const QString &target);
+    Q_INVOKABLE void remove(const QString &edge);
 
 signals:
     void countChanged();
@@ -63,8 +70,8 @@ signals:
 private:
     Q_DISABLE_COPY(EdgeModel)
 
+    Graph *m_graph;
     QHash<int, QByteArray> m_roles;
-    ogdf::GraphAttributes *m_attributes;
     QList<ogdf::edge> m_edges;
 };
 

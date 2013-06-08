@@ -18,15 +18,16 @@
 #include "ogdf/basic/GraphAttributes.h"
 #include "ogdf/basic/GraphObserver.h"
 
+class Graph;
+
 /**
- *
+ * This class provides a list model for nodes.
  */
 class NodeModel : public QAbstractListModel, public ogdf::GraphObserver
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
-    //model API
     enum Roles {
         XRole = Qt::UserRole + 1,
         YRole,
@@ -34,16 +35,15 @@ public:
         HeightRole
     };
 
-    NodeModel(ogdf::GraphAttributes *attributes, QObject *parent = 0);
-    ~NodeModel();
-
-    ogdf::node node(int index);
-    void attributesChanged();
+    NodeModel(Graph *graph);
 
     // QAbstractListModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QHash<int, QByteArray> roleNames() const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    bool setData(const QModelIndex &index, const QVariant &value,
+                 int role = Qt::EditRole);
 
     // GraphObserver
     void reInit();
@@ -53,8 +53,14 @@ public:
     void edgeAdded(ogdf::edge e);
     void edgeDeleted(ogdf::edge e);
 
+    // C++ API.
+    void attributesChanged();
+
     // QML API
     int count() const;
+    Q_INVOKABLE QString get(int index) const;
+    Q_INVOKABLE void insert(const QString &node);
+    Q_INVOKABLE void remove(const QString &node);
 
 signals:
     void countChanged();
@@ -62,7 +68,7 @@ signals:
 private:
     Q_DISABLE_COPY(NodeModel)
 
-    ogdf::GraphAttributes *m_attributes;
+    Graph *m_graph;
     QHash<int, QByteArray> m_roles;
     QList<ogdf::node> m_nodes;
 };

@@ -23,7 +23,7 @@
 #include "ogdf/basic/GraphAttributes.h"
 
 /**
- * @brief The Graph class
+ * This class provides a container for a graph with a layout attached.
  */
 class Graph : public QObject
 {
@@ -34,7 +34,6 @@ class Graph : public QObject
     Q_PROPERTY(EdgeModel *edges READ edges CONSTANT)
 public:
     Graph(QObject *parent = 0);
-    ~Graph();
 
     bool autoLayout() const;
     void setAutoLayout(bool autoLayout);
@@ -44,6 +43,23 @@ public:
     NodeModel *nodes();
     EdgeModel *edges();
 
+    // C++ API
+    ogdf::Graph &g();
+    ogdf::GraphAttributes &attributes();
+
+    ogdf::node v(const QString &node) const;
+    QString node(ogdf::node v) const;
+    void insertNode(ogdf::node v, const QString &node);
+    void removeNode(ogdf::node v);
+    void clearNodes();
+
+    ogdf::edge e(const QString &edge) const;
+    QString edge(ogdf::edge e) const;
+    void insertEdge(ogdf::edge e, const QString &edge);
+    void removeEdge(ogdf::edge e);
+    void clearEdges();
+
+    // QML API
     Q_INVOKABLE void randomGraph(int n, int m);
     Q_INVOKABLE void randomSimpleGraph(int n, int m);
     Q_INVOKABLE void randomBiconnectedGraph(int n, int m);
@@ -53,37 +69,32 @@ public:
     Q_INVOKABLE void randomHierarchy(int n, int m, bool planar,
                                      bool singleSource, bool longEdges);
     Q_INVOKABLE void randomDiGraph(int n, double p);
-
-    Q_INVOKABLE int addNode(QJSValue attributes);
-    Q_INVOKABLE void eachNode(QJSValue callback);
-    Q_INVOKABLE void modifyNode(int index, QJSValue setter);
-    Q_INVOKABLE void removeNode(int index);
-
-    Q_INVOKABLE int addEdge(int sourceNode, int targetNode);
-    Q_INVOKABLE void eachEdge(QJSValue callback);
-    Q_INVOKABLE void removeEdge(int index);
-
     Q_INVOKABLE void clear();
 
 signals:
     void autoLayoutChanged();
 
-private slots:
+public slots:
     void invalidateLayout();
 
 private:
     Q_DISABLE_COPY(Graph)
-    QJSValue nodeAttributes(ogdf::node v);
-    void setNodeAttributes(ogdf::node v, QJSValue object);
 
     ogdf::Graph m_graph;
-    ogdf::GraphAttributes m_attributes;
+
+    NodeModel m_nodeModel;
+    QHash<ogdf::node, QString> m_nodes;
+    QHash<QString, ogdf::node> m_vs;
+
+    EdgeModel m_edgeModel;
+    QHash<ogdf::edge, QString> m_edges;
+    QHash<QString, ogdf::edge> m_es;
+
     bool m_autoLayout;
     int m_layoutLock;
     bool m_layoutValid;
     QScopedPointer<GraphLayout> m_layout;
-    NodeModel m_nodes;
-    EdgeModel m_edges;
+    ogdf::GraphAttributes m_attributes;
 };
 
 #endif

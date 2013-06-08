@@ -18,57 +18,46 @@ function random(index) {
     var p = 0.618;
     switch (index) {
     case 0:
-        graph.clear();
         graph.randomGraph(n, m);
         break;
     case 1:
-        graph.clear();
         graph.randomSimpleGraph(n, m);
         break;
     case 2:
-        graph.clear();
         graph.randomBiconnectedGraph(n, m);
         break;
     case 3:
-        graph.clear();
         graph.randomTriconnectedGraph(n, p, 1.0 - p);
         break;
     case 4:
-        graph.clear();
         graph.randomTree(n);
         break;
     case 5:
-        graph.clear();
         graph.randomTree(n, n / 2.0, graphView.width);
         break;
     case 6:
-        graph.clear();
         graph.randomHierarchy(n, m, true, false, true);
         break;
     case 7:
-        graph.clear();
         graph.randomDiGraph(n, p);
         break;
     default:
         return;
     }
-    // Assign size to every node.
-    graph.eachNode(function(index) {
-        graph.modifyNode(index, { width: 50, height: 27 });
-    });
 }
 
 function iterate() {
-    consoleView.text = "Iterating nodes...\n";
-    graph.eachNode(function(index) {
-        consoleView.text += " " + index;
-    });
+    consoleView.text = "Iterating " + graph.nodes.count + " nodes:\n  ";
+    for (var i = 0; i < graph.nodes.count; i++) {
+        consoleView.text += " " + graph.nodes.get(i);
+    }
     consoleView.text += "\n";
-    consoleView.text += "Iterating edges...\n ";
-    graph.eachEdge(function(index) {
-        consoleView.text += " " + index;
-    });
-    consoleView.text += "\n...done!\n";
+    consoleView.text += "Iterating " + graph.edges.count + " edges:\n  ";
+    for (var i = 0; i < graph.edges.count; i++) {
+        consoleView.text += " " + graph.edges.get(i);
+        consoleView.text += " [" + graph.edges.getSource(i)
+        consoleView.text += " → "+ graph.edges.getTarget(i) + "]\n  ";
+    }
     consoleView.visible = true;
 }
 

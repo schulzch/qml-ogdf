@@ -12,32 +12,17 @@
  * details: http://www.gnu.org/copyleft/lesser
  */
 #include "nodemodel.h"
+#include "graph.h"
 
-NodeModel::NodeModel(ogdf::GraphAttributes *attributes, QObject *parent)
-    : QAbstractListModel(parent), ogdf::GraphObserver(&attributes->constGraph()),
-      m_attributes(attributes)
+NodeModel::NodeModel(Graph *graph)
+    : QAbstractListModel(graph), ogdf::GraphObserver(&graph->g()),
+      m_graph(graph)
 {
-    m_roles[Qt::DisplayRole] = "index";
+    m_roles[Qt::DisplayRole] = "node";
     m_roles[XRole] = "x";
     m_roles[YRole] = "y";
     m_roles[WidthRole] = "width";
     m_roles[HeightRole] = "height";
-}
-
-NodeModel::~NodeModel()
-{
-}
-
-ogdf::node NodeModel::node(int index)
-{
-    return m_nodes[index];
-}
-
-void NodeModel::attributesChanged()
-{
-    QModelIndex top = createIndex(0, 0);
-    QModelIndex bottom = createIndex(count(), 0);
-    emit dataChanged(top, bottom);
 }
 
 int NodeModel::rowCount(const QModelIndex &parent) const
@@ -51,6 +36,11 @@ QHash<int, QByteArray> NodeModel::roleNames() const
     return m_roles;
 }
 
+Qt::ItemFlags NodeModel::flags(const QModelIndex &index) const
+{
+    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
+}
+
 QVariant NodeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
@@ -59,26 +49,53 @@ QVariant NodeModel::data(const QModelIndex &index, int role) const
     ogdf::node v = m_nodes[index.row()];
     switch (role) {
     case Qt::DisplayRole:
-        return QVariant(v->index());
+        return QVariant(m_graph->node(v));
     case XRole:
-        return QVariant(m_attributes->x(v));
+        return QVariant(m_graph->attributes().x(v));
     case YRole:
-        return QVariant(m_attributes->y(v));
+        return QVariant(m_graph->attributes().y(v));
     case WidthRole:
-        return QVariant(m_attributes->width(v));
+        return QVariant(m_graph->attributes().width(v));
     case HeightRole:
-        return QVariant(m_attributes->height(v));
+        return QVariant(m_graph->attributes().height(v));
     default:
         return QVariant();
     }
+}
+
+bool NodeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!index.isValid()) {
+        return false;
+    }
+    ogdf::node v = m_nodes[index.row()];
+    switch (role) {
+    case XRole:
+        m_graph->attributes().x(v) = value.toDouble();
+        break;
+    case YRole:
+        m_graph->attributes().y(v) = value.toDouble();
+        break;
+    case WidthRole:
+        m_graph->attributes().width(v) = value.toDouble();
+        break;
+    case HeightRole:
+        m_graph->attributes().height(v) = value.toDouble();
+        break;
+    default:
+        return false;
+    }
+    emit dataChanged(index, index);
+    return true;
 }
 
 void NodeModel::reInit()
 {
     beginResetModel();
     ogdf::node v;
-    forall_nodes (v, m_attributes->constGraph()) {
+    forall_nodes (v, m_graph->g()) {
         m_nodes.append(v);
+        m_graph->insertNode(v, QString("%1").arg(v->index()));
     }
     endResetModel();
     emit countChanged();
@@ -88,6 +105,7 @@ void NodeModel::cleared()
 {
     beginResetModel();
     m_nodes.clear();
+    m_graph->clearNodes();
     endResetModel();
     emit countChanged();
 }
@@ -96,6 +114,7 @@ void NodeModel::nodeAdded(ogdf::node v)
 {
     beginInsertRows(QModelIndex(), m_nodes.count(), m_nodes.count());
     m_nodes.append(v);
+    m_graph->insertNode(v, QString("%1").arg(v->index()));
     endInsertRows();
     emit countChanged();
 }
@@ -106,6 +125,7 @@ void NodeModel::nodeDeleted(ogdf::node v)
     Q_ASSERT(index != -1);
     beginRemoveRows(QModelIndex(), index, index);
     m_nodes.removeAt(index);
+    m_graph->removeNode(v);
     endRemoveRows();
     emit countChanged();
 }
@@ -118,7 +138,40 @@ void NodeModel::edgeDeleted(ogdf::edge e)
 {
 }
 
+void NodeModel::attributesChanged()
+{
+    QModelIndex top = createIndex(0, 0);
+    QModelIndex bottom = createIndex(count(), 0);
+    emit dataChanged(top, bottom);
+}
+
 int NodeModel::count() const
 {
     return m_nodes.count();
+}
+
+QString NodeModel::get(int index) const
+{
+    ogdf::node v = m_nodes.value(index);
+    if (v) {
+        return m_graph->node(v);
+    } else {
+        return QString();
+    }
+}
+
+void NodeModel::insert(const QString &node)
+{
+    ogdf::node v = m_graph->g().newNode();
+    m_graph->insertNode(v, node);
+    m_graph->invalidateLayout();
+}
+
+void NodeModel::remove(const QString &node)
+{
+    ogdf::node v = m_graph->v(node);
+    if (v) {
+        m_graph->g().delNode(v);
+        m_graph->invalidateLayout();
+    }
 }

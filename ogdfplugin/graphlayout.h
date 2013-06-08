@@ -65,7 +65,6 @@ public:
     };
 
     GraphLayout(QObject *parent = 0);
-    ~GraphLayout();
 
     Algorithm algorithm() const;
     void setAlgorithm(Algorithm algorithm);

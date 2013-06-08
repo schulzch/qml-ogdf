@@ -12,34 +12,22 @@
  * details: http://www.gnu.org/copyleft/lesser
  */
 #include "edgemodel.h"
+#include "graph.h"
+#include <QQmlInfo>
 #include <QPointF>
 
-EdgeModel::EdgeModel(ogdf::GraphAttributes *attributes, QObject *parent)
-    : QAbstractListModel(parent), ogdf::GraphObserver(&attributes->constGraph()),
-      m_attributes(attributes)
+EdgeModel::EdgeModel(Graph *graph)
+    : QAbstractListModel(graph), ogdf::GraphObserver(&graph->g()),
+      m_graph(graph)
 {
-    m_roles[Qt::DisplayRole] = "index";
-    m_roles[SourceX] = "sourceX";
-    m_roles[SourceY] = "sourceY";
-    m_roles[TargetX] = "targetX";
-    m_roles[TargetY] = "targetY";
+    m_roles[Qt::DisplayRole] = "edge";
+    m_roles[SourceRole] = "source";
+    m_roles[SourceXRole] = "sourceX";
+    m_roles[SourceYRole] = "sourceY";
+    m_roles[TargetRole] = "target";
+    m_roles[TargetXRole] = "targetX";
+    m_roles[TargetYRole] = "targetY";
     m_roles[BendsRole] = "bends";
-}
-
-EdgeModel::~EdgeModel()
-{
-}
-
-ogdf::edge EdgeModel::edge(int index)
-{
-    return m_edges[index];
-}
-
-void EdgeModel::attributesChanged()
-{
-    QModelIndex top = createIndex(0, 0);
-    QModelIndex bottom = createIndex(count(), 0);
-    emit dataChanged(top, bottom);
 }
 
 int EdgeModel::rowCount(const QModelIndex &parent) const
@@ -61,20 +49,24 @@ QVariant EdgeModel::data(const QModelIndex &index, int role) const
     ogdf::edge e = m_edges[index.row()];
     switch (role) {
     case Qt::DisplayRole:
-        return QVariant(e->index());
-    case SourceX:
-        return QVariant(m_attributes->x(e->source()));
-    case SourceY:
-        return QVariant(m_attributes->y(e->source()));
-    case TargetX:
-        return QVariant(m_attributes->x(e->target()));
-    case TargetY:
-        return QVariant(m_attributes->y(e->target()));
+        return QVariant(m_graph->edge(e));
+    case SourceRole:
+        return QVariant(m_graph->node(e->source()));
+    case SourceXRole:
+        return QVariant(m_graph->attributes().x(e->source()));
+    case SourceYRole:
+        return QVariant(m_graph->attributes().y(e->source()));
+    case TargetRole:
+        return QVariant(m_graph->node(e->target()));
+    case TargetXRole:
+        return QVariant(m_graph->attributes().x(e->target()));
+    case TargetYRole:
+        return QVariant(m_graph->attributes().y(e->target()));
     case BendsRole: {
         QVariantList points;
-        ogdf::DPolyline &bends = m_attributes->bends(e);
+        ogdf::DPolyline &bends = m_graph->attributes().bends(e);
         if (bends.size() == 0) {
-            m_attributes->addNodeCenter2Bends();
+            m_graph->attributes().addNodeCenter2Bends();
         }
         ogdf::DPolyline::const_iterator bend;
         for (bend = bends.begin(); bend != bends.end(); bend++) {
@@ -91,8 +83,9 @@ void EdgeModel::reInit()
 {
     beginResetModel();
     ogdf::edge e;
-    forall_edges (e, m_attributes->constGraph()) {
+    forall_edges (e, m_graph->g()) {
         m_edges.append(e);
+        m_graph->insertEdge(e, QString("%1").arg(e->index()));
     }
     endResetModel();
     emit countChanged();
@@ -102,6 +95,7 @@ void EdgeModel::cleared()
 {
     beginResetModel();
     m_edges.clear();
+    m_graph->clearEdges();
     endResetModel();
     emit countChanged();
 }
@@ -118,6 +112,7 @@ void EdgeModel::edgeAdded(ogdf::edge e)
 {
     beginInsertRows(QModelIndex(), m_edges.count(), m_edges.count());
     m_edges.append(e);
+    m_graph->insertEdge(e, QString("%1").arg(e->index()));
     endInsertRows();
     emit countChanged();
 }
@@ -128,11 +123,73 @@ void EdgeModel::edgeDeleted(ogdf::edge e)
     Q_ASSERT(index != -1);
     beginRemoveRows(QModelIndex(), index, index);
     m_edges.removeAt(index);
+    m_graph->removeEdge(e);
     endRemoveRows();
     emit countChanged();
+}
+
+void EdgeModel::attributesChanged()
+{
+    QModelIndex top = createIndex(0, 0);
+    QModelIndex bottom = createIndex(count(), 0);
+    emit dataChanged(top, bottom);
 }
 
 int EdgeModel::count() const
 {
     return m_edges.count();
+}
+
+QString EdgeModel::get(int index) const
+{
+    ogdf::edge e = m_edges.value(index);
+    if (e) {
+        return m_graph->edge(e);
+    } else {
+        return QString();
+    }
+}
+
+QString EdgeModel::getSource(int index) const
+{
+    ogdf::edge e = m_edges.value(index);
+    if (e) {
+        return m_graph->node(e->source());
+    } else {
+        return QString();
+    }
+}
+
+QString EdgeModel::getTarget(int index) const
+{
+    ogdf::edge e = m_edges.value(index);
+    if (e) {
+        return m_graph->node(e->target());
+    } else {
+        return QString();
+    }
+}
+
+void EdgeModel::insert(const QString &edge, const QString &source, const QString &target)
+{
+    ogdf::node v = m_graph->v(source);
+    ogdf::node w = m_graph->v(target);
+    if (!v) {
+        qmlInfo(this) << "Source node \"" << source << "\" does not exist";
+    } else if (!w) {
+        qmlInfo(this) << "Target node \"" << target << "\" does not exist";
+    } else {
+        ogdf::edge e = m_graph->g().newEdge(v, w);
+        m_graph->insertEdge(e, edge);
+        m_graph->invalidateLayout();
+    }
+}
+
+void EdgeModel::remove(const QString &edge)
+{
+    ogdf::edge e = m_graph->e(edge);
+    if (e) {
+        m_graph->g().delEdge(e);
+        m_graph->invalidateLayout();
+    }
 }
