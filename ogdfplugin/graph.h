@@ -14,6 +14,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <QUrl>
 #include <QObject>
 #include <QJSValue>
 #include "nodemodel.h"
@@ -23,20 +24,20 @@
 #include "ogdf/basic/GraphAttributes.h"
 
 /**
- * This class provides a container for a graph with a layout attached.
+ * This class provides a graph for layouting.
  */
 class Graph : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool autoLayout READ autoLayout WRITE setAutoLayout NOTIFY autoLayoutChanged)
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(GraphLayout *layout READ layout CONSTANT)
     Q_PROPERTY(NodeModel *nodes READ nodes CONSTANT)
     Q_PROPERTY(EdgeModel *edges READ edges CONSTANT)
 public:
     Graph(QObject *parent = 0);
 
-    bool autoLayout() const;
-    void setAutoLayout(bool autoLayout);
+    QUrl source() const;
+    void setSource(const QUrl &source);
 
     GraphLayout *layout() const;
 
@@ -45,7 +46,6 @@ public:
 
     // C++ API
     ogdf::Graph &g();
-    ogdf::GraphAttributes &attributes();
 
     ogdf::node v(const QString &node) const;
     QString node(ogdf::node v) const;
@@ -59,7 +59,11 @@ public:
     void removeEdge(ogdf::edge e);
     void clearEdges();
 
+    ogdf::GraphAttributes &attributes();
+
     // QML API
+    Q_INVOKABLE bool save(const QUrl &url);
+    Q_INVOKABLE bool reload();
     Q_INVOKABLE void randomGraph(int n, int m);
     Q_INVOKABLE void randomSimpleGraph(int n, int m);
     Q_INVOKABLE void randomBiconnectedGraph(int n, int m);
@@ -72,13 +76,15 @@ public:
     Q_INVOKABLE void clear();
 
 signals:
-    void autoLayoutChanged();
+    void sourceChanged();
 
-public slots:
-    void invalidateLayout();
+private slots:
+    void updateModels();
 
 private:
     Q_DISABLE_COPY(Graph)
+
+    QUrl m_source;
 
     ogdf::Graph m_graph;
 
@@ -90,11 +96,8 @@ private:
     QHash<ogdf::edge, QString> m_edges;
     QHash<QString, ogdf::edge> m_es;
 
-    bool m_autoLayout;
-    int m_layoutLock;
-    bool m_layoutValid;
-    QScopedPointer<GraphLayout> m_layout;
     ogdf::GraphAttributes m_attributes;
+    QScopedPointer<GraphLayout> m_layout;
 };
 
 #endif

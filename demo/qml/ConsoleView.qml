@@ -1,8 +1,9 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: consoleView
     property alias text: textBuffer.text
+
+    id: consoleView
     anchors.fill: parent
     color: "#d8323232"
     onVisibleChanged: {

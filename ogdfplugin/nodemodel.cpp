@@ -86,6 +86,7 @@ bool NodeModel::setData(const QModelIndex &index, const QVariant &value, int rol
         return false;
     }
     emit dataChanged(index, index);
+    m_graph->layout()->invalidate();
     return true;
 }
 
@@ -164,7 +165,7 @@ void NodeModel::insert(const QString &node)
 {
     ogdf::node v = m_graph->g().newNode();
     m_graph->insertNode(v, node);
-    m_graph->invalidateLayout();
+    m_graph->layout()->invalidate();
 }
 
 void NodeModel::remove(const QString &node)
@@ -172,6 +173,6 @@ void NodeModel::remove(const QString &node)
     ogdf::node v = m_graph->v(node);
     if (v) {
         m_graph->g().delNode(v);
-        m_graph->invalidateLayout();
+        m_graph->layout()->invalidate();
     }
 }

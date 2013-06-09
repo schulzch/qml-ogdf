@@ -47,24 +47,14 @@
 #include "ogdf/upward/VisibilityLayout.h"
 #include <QQmlInfo>
 
-// Enable to get *.gml files for each layout, that crashes or hangs.
-//#define CRASH_DUMP_GRAPHS QT_DEBUG
-
-#ifdef CRASH_DUMP_GRAPHS
-#include "ogdf/fileformats/GraphIO.h"
-#include <QMetaEnum>
-#include <QDateTime>
-#include <QDebug>
-#include <QFile>
-#endif
-
 #define CREATE_MODULE(name) case name: \
     layout = new ogdf::name(); \
     break
 
-GraphLayout::GraphLayout(QObject *parent)
-    : QObject(parent), m_layout(new ogdf::FMMMLayout()),
-      m_algorithm(GraphLayout::FMMMLayout), m_enabled(true)
+GraphLayout::GraphLayout(ogdf::GraphAttributes &attributes, QObject *parent)
+    : QObject(parent), m_attributes(&attributes),
+      m_layout(new ogdf::FMMMLayout()), m_algorithm(GraphLayout::FMMMLayout),
+      m_valid(false)
 {
 }
 
@@ -119,44 +109,25 @@ void GraphLayout::setAlgorithm(Algorithm algorithm)
     if (layout) {
         m_layout.reset(layout);
         m_algorithm = algorithm;
+        invalidate();
         emit algorithmChanged();
     }
 }
 
-bool GraphLayout::enabled() const
+bool GraphLayout::valid() const
 {
-    return m_enabled;
+    return m_valid;
 }
 
-void GraphLayout::setEnabled(bool enabled)
+void GraphLayout::call()
 {
-    if (enabled != m_enabled) {
-        m_enabled = enabled;
-        emit enabledChanged();
-    }
-}
-
-void GraphLayout::call(ogdf::GraphAttributes &attribtues)
-{
-    if (!m_enabled) {
+    if (m_valid) {
         return;
     }
     try {
-#ifdef CRASH_DUMP_GRAPHS
-        // Write debug file for later debugging.
-        QDateTime utcTime = QDateTime::currentDateTimeUtc();
-        QMetaEnum algorithmEnum = metaObject()->enumerator(0);
-        QString debugCallFilename = QString("call_%1_%2.gml")
-                .arg(utcTime.toString("yyyy-MM-dd_hh-mm-ss"))
-                .arg(algorithmEnum.valueToKey(m_algorithm));
-        qDebug() << "GraphLayout:" << debugCallFilename;
-        ogdf::GraphIO::writeGML(attribtues, debugCallFilename.toLatin1().data());
-#endif
-        m_layout->call(attribtues);
-#ifdef CRASH_DUMP_GRAPHS
-        // Delete debug file, if call did not crash.
-        QFile::remove(debugCallFilename);
-#endif
+        m_layout->call(*m_attributes);
+        m_valid = true;
+        emit validChanged();
     } catch (ogdf::AlgorithmFailureException &e) {
         QString reason = QString("of an unknown reason (%1)").arg(e.exceptionCode());
         switch (e.exceptionCode()) {
@@ -246,5 +217,13 @@ void GraphLayout::call(ogdf::GraphAttributes &attribtues)
         qmlInfo(this) << "OGDF exception caught";
     } catch (...) {
         qmlInfo(this) << "Unknown exception caught";
+    }
+}
+
+void GraphLayout::invalidate()
+{
+    if (m_valid) {
+        m_valid = false;
+        emit validChanged();
     }
 }

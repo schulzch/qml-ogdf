@@ -23,6 +23,15 @@ Rectangle {
     Graph {
         id: graph
     }
+    Timer {
+        id: autoLayouter
+        interval: 100
+        repeat: true
+        running: true
+        onTriggered: {
+            graph.layout.call();
+        }
+    }
     GraphTools {
         id: graphTools
         anchors.top: parent.top

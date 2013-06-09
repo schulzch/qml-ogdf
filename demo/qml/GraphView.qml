@@ -15,8 +15,9 @@ import QtQuick 2.0
 import OGDF 1.0
 
 CanvasView {
-    id: graphView
     property QtObject graph: null
+
+    id: graphView
     clip: true
     Item {
         id: graphScene
@@ -29,21 +30,16 @@ CanvasView {
             delegate: Canvas {
                 property int headSize: 10
                 property color color: '#ffffff'
-                property int sourceX: model.sourceX
-                property int sourceY: model.sourceY
-                property int targetX: model.targetX
-                property int targetY: model.targetY
-                property int minX: Math.min(sourceX, targetX)
-                property int minY: Math.min(sourceY, targetY)
-                property int maxX: Math.max(sourceX, targetX)
-                property int maxY: Math.max(sourceY, targetY)
+                property int minX: Math.min(model.sourceX, model.targetX)
+                property int minY: Math.min(model.sourceY, model.targetY)
+                property int maxX: Math.max(model.sourceX, model.targetX)
+                property int maxY: Math.max(model.sourceY, model.targetY)
                 property var bends: model.bends
                 x: minX - headSize / 2
                 y: minY - headSize / 2
                 width: maxX - minX + headSize + 1
                 height: maxY - minY + headSize + 1
                 antialiasing: true
-                onBendsChanged: requestPaint()
                 onPaint: {
                     var context = getContext('2d');
                     // Push.
@@ -83,8 +79,8 @@ CanvasView {
                 id: rect
                 x: model.x - model.width / 2
                 y: model.y - model.height / 2
-                width: 50
-                height: 27
+                width: childrenRect.width + 8
+                height: childrenRect.height + 4
                 color: "#49483e"
                 radius: 4
                 border.width: 1
@@ -100,21 +96,11 @@ CanvasView {
                     value: rect.height
                 }
                 Text {
-                    id: indexLabel
-                    anchors.top: parent.top
-                    anchors.topMargin: 2
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    x: 4
+                    y: 2
                     font.pixelSize: 12
                     color: "#ffffff"
-                    text: model.index
-                }
-                Text {
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 2
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    font.pixelSize: 8
-                    color: "#ffffff"
-                    text: model.x.toFixed(0) + " " + model.y.toFixed(0)
+                    text: model.node
                 }
             }
         }

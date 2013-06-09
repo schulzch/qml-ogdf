@@ -14,12 +14,13 @@
 import QtQuick 2.0
 
 ShaderEffect {
-    id: background
     property real time: 1.0
     property point location: Qt.point(x, y)
     property point size: Qt.point(width, height)
     property alias model: menuView.model
     property alias selectedIndex: menuView.selectedIndex
+
+    id: background
     width: 275
     fragmentShader:
         "uniform highp vec2 location;" +

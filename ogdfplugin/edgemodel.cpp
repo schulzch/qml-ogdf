@@ -181,7 +181,7 @@ void EdgeModel::insert(const QString &edge, const QString &source, const QString
     } else {
         ogdf::edge e = m_graph->g().newEdge(v, w);
         m_graph->insertEdge(e, edge);
-        m_graph->invalidateLayout();
+        m_graph->layout()->invalidate();
     }
 }
 
@@ -190,6 +190,6 @@ void EdgeModel::remove(const QString &edge)
     ogdf::edge e = m_graph->e(edge);
     if (e) {
         m_graph->g().delEdge(e);
-        m_graph->invalidateLayout();
+        m_graph->layout()->invalidate();
     }
 }

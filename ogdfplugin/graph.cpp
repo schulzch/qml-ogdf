@@ -13,33 +13,28 @@
  */
 #include "graph.h"
 #include "ogdf/basic/graph_generators.h"
+#include "ogdf/fileformats/GraphIO.h"
 #include <QQmlInfo>
 
 Graph::Graph(QObject *parent)
-    : QObject(parent), m_graph(), m_attributes(m_graph), m_autoLayout(true),
-      m_layoutLock(0), m_layoutValid(false), m_layout(new GraphLayout()),
-      m_nodeModel(this), m_edgeModel(this)
+    : QObject(parent), m_graph(), m_nodeModel(this), m_edgeModel(this),
+      m_attributes(m_graph), m_layout(new GraphLayout(m_attributes, this))
 {
-    connect(m_layout.data(), &GraphLayout::algorithmChanged,
-            this, &Graph::invalidateLayout);
+    connect(m_layout.data(), &GraphLayout::validChanged,
+            this, &Graph::updateModels);
 }
 
-bool Graph::autoLayout() const
+QUrl Graph::source() const
 {
-    return m_autoLayout;
+    return m_source;
 }
 
-void Graph::setAutoLayout(bool autoLayout)
+void Graph::setSource(const QUrl &source)
 {
-    if (autoLayout != m_autoLayout) {
-        m_autoLayout = autoLayout;
-        if (m_autoLayout) {
-            m_layoutLock--;
-        } else {
-            m_layoutLock++;
-        }
-        emit autoLayoutChanged();
-        invalidateLayout();
+    if (source != m_source) {
+        m_source = source;
+        reload();
+        emit sourceChanged();
     }
 }
 
@@ -61,11 +56,6 @@ EdgeModel *Graph::edges()
 ogdf::Graph &Graph::g()
 {
     return m_graph;
-}
-
-ogdf::GraphAttributes &Graph::attributes()
-{
-    return m_attributes;
 }
 
 ogdf::node Graph::v(const QString &node) const
@@ -126,18 +116,49 @@ void Graph::clearEdges()
     m_es.clear();
 }
 
+ogdf::GraphAttributes &Graph::attributes()
+{
+    return m_attributes;
+}
+
+bool Graph::save(const QUrl &url)
+{
+    if (!url.isLocalFile()) {
+        qmlInfo(this) << "URL is not a local file";
+        return false;
+    }
+    const char *filename = m_source.toLocalFile().toLatin1().data();
+    bool result = ogdf::GraphIO::writeGML(m_attributes, filename);
+    if (result && m_source != url) {
+        m_source = url;
+        emit sourceChanged();
+    }
+    return result;
+}
+
+bool Graph::reload()
+{
+    if (!m_source.isLocalFile()) {
+        qmlInfo(this) << "Source is not a local file";
+        return false;
+    }
+    clear();
+    const char *filename = m_source.toLocalFile().toLatin1().data();
+    return ogdf::GraphIO::readGML(m_attributes, m_graph, filename);
+}
+
 void Graph::randomGraph(int n, int m)
 {
     clear();
     ogdf::randomGraph(m_graph, m, n);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::randomSimpleGraph(int n, int m)
 {
     clear();
     if (ogdf::randomSimpleGraph(m_graph, n, m)) {
-        invalidateLayout();
+        m_layout->invalidate();
     } else {
         qmlInfo(this) << "Can not generate a simple graph with "
                       << n << " nodes and " << m << " edges";
@@ -148,28 +169,28 @@ void Graph::randomBiconnectedGraph(int n, int m)
 {
     clear();
     ogdf::randomBiconnectedGraph(m_graph, m, n);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::randomTriconnectedGraph(int n, double p1, double p2)
 {
     clear();
     ogdf::randomTriconnectedGraph(m_graph, n, p1, p2);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::randomTree(int n)
 {
     clear();
     ogdf::randomTree(m_graph, n);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::randomTree(int n, int maxDeg, int maxWidth)
 {
     clear();
     ogdf::randomTree(m_graph, n, maxDeg, maxWidth);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::randomHierarchy(int n, int m, bool planar,
@@ -178,14 +199,14 @@ void Graph::randomHierarchy(int n, int m, bool planar,
     clear();
     ogdf::randomHierarchy(m_graph, n, m, planar,
                           singleSource, longEdges);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::randomDiGraph(int n, double p)
 {
     clear();
     ogdf::randomDiGraph(m_graph, n, p);
-    invalidateLayout();
+    m_layout->invalidate();
 }
 
 void Graph::clear()
@@ -193,13 +214,10 @@ void Graph::clear()
     m_graph.clear();
 }
 
-void Graph::invalidateLayout()
+void Graph::updateModels()
 {
-    m_layoutValid = false;
-    if (m_layout && m_layoutLock == 0) {
-        m_layout->call(m_attributes);
+    if (m_layout->valid()) {
         m_nodeModel.attributesChanged();
         m_edgeModel.attributesChanged();
-        m_layoutValid = true;
     }
 }

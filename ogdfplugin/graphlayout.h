@@ -18,14 +18,14 @@
 #include "ogdf/module/LayoutModule.h"
 
 /**
- * @brief The GraphLayout class
+ * This class provides graph layout.
  */
 class GraphLayout : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Algorithm)
     Q_PROPERTY(Algorithm algorithm READ algorithm WRITE setAlgorithm NOTIFY algorithmChanged)
-    Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
+    Q_PROPERTY(bool valid READ valid NOTIFY validChanged)
 public:
     enum Algorithm {
         BalloonLayout,
@@ -64,26 +64,29 @@ public:
         VisibilityLayout
     };
 
-    GraphLayout(QObject *parent = 0);
+    GraphLayout(ogdf::GraphAttributes &attributes, QObject *parent = 0);
 
     Algorithm algorithm() const;
     void setAlgorithm(Algorithm algorithm);
 
-    bool enabled() const;
-    void setEnabled(bool enabled);
+    bool valid() const;
 
-    void call(ogdf::GraphAttributes &attribtues);
+    Q_INVOKABLE void call();
 
 signals:
     void algorithmChanged();
-    void enabledChanged();
+    void validChanged();
+
+public slots:
+    void invalidate();
 
 private:
     Q_DISABLE_COPY(GraphLayout)
 
     QScopedPointer<ogdf::LayoutModule> m_layout;
+    ogdf::GraphAttributes *m_attributes;
     Algorithm m_algorithm;
-    bool m_enabled;
+    bool m_valid;
 };
 
 #endif
