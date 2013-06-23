@@ -1,3 +1,4 @@
 module OGDF
 plugin ogdfplugin
 GraphView 1.0 GraphView.qml
+EdgeSpline 1.0 EdgeSpline.qml

@@ -110,7 +110,26 @@ Rectangle {
         clip: true
         GraphView {
             anchors.fill: parent
-            graph: graph
+            model: graph
+            edgeDelegate: EdgeSpline {
+                color: "#ffffff"
+            }
+            nodeDelegate: Rectangle {
+                id: rect
+                width: childrenRect.width + 8
+                height: childrenRect.height + 4
+                color: "#49483e"
+                radius: 4
+                border.width: 1
+                border.color: "#af9476"
+                Text {
+                    x: 4
+                    y: 2
+                    font.pixelSize: 12
+                    color: "#ffffff"
+                    text: model.node
+                }
+            }
         }
     }
     Item {
