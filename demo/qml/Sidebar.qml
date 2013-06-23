@@ -17,11 +17,12 @@ ShaderEffect {
     property real time: 1.0
     property point location: Qt.point(x, y)
     property point size: Qt.point(width, height)
-    property alias model: menuView.model
-    property alias selectedIndex: menuView.selectedIndex
+    property alias actionModel: repeater.model
+    property alias layoutModel: listView.model
+    property alias selectedIndex: listView.selectedIndex
 
     id: background
-    width: 275
+    width: 225
     fragmentShader:
         "uniform highp vec2 location;" +
         "uniform highp vec2 size;" +
@@ -71,11 +72,58 @@ ShaderEffect {
         color: "#ffffff"
         text: "for QML"
     }
+    Grid {
+        id: actionView
+        anchors.top: forQMLLabel.bottom
+        anchors.topMargin: 4
+        anchors.left: parent.left
+        anchors.leftMargin: 25
+        anchors.right: parent.right
+        anchors.rightMargin: 25
+        spacing: 2
+        columns: 2
+        Repeater {
+            id: repeater
+            Rectangle {
+                property bool highlight: false
+                width: parent.width / 2
+                height: actionLabel.implicitHeight
+                color: highlight ? "#ffffff" : "transparent"
+                radius: 4
+                border.width: 1
+                border.color: "#ffffff"
+                Text {
+                    id: actionLabel
+                    anchors.centerIn: parent
+                    font.family: "Arial,Verdana,sans-serif"
+                    font.pixelSize: 12
+                    color: highlight ? "#000000" : "#ffffff"
+                    text: model.caption
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        repeater.model.execute(index);
+                    }
+                    onEntered: {
+                        highlight = true;
+                    }
+                    onExited: {
+                        highlight = false;
+                    }
+                }
+            }
+        }
+    }
+
     ListView {
-        id: menuView
+        id: listView
         property bool hovering: false
         property int selectedIndex: -1
-        anchors.top: forQMLLabel.bottom
+        anchors.top: actionView.bottom
+        anchors.topMargin: 4
         anchors.left: parent.left
         anchors.leftMargin: 25
         anchors.bottom: parent.bottom
@@ -87,11 +135,11 @@ ShaderEffect {
         clip: true
         delegate: Text {
             x: 6
-            width: menuView.width - 12
+            width: listView.width - 12
             font.family: "Arial,Verdana,sans-serif"
-            font.bold: menuView.selectedIndex == index
+            font.bold: listView.selectedIndex == index
             font.pixelSize: 12
-            color: menuView.selectedIndex == index ? "#ffffff" : "#66ffffff"
+            color: listView.selectedIndex == index ? "#ffffff" : "#66ffffff"
             text: "» " + model.caption
             clip: true
             MouseArea {
@@ -99,21 +147,21 @@ ShaderEffect {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    menuView.selectedIndex = index;
+                    listView.selectedIndex = index;
                 }
                 onEntered: {
-                    menuView.hovering = true;
-                    menuView.focus = true;
-                    menuView.currentIndex = index;
+                    listView.hovering = true;
+                    listView.focus = true;
+                    listView.currentIndex = index;
                 }
                 onExited: {
-                    menuView.hovering = false;
+                    listView.hovering = false;
                 }
             }
         }
         highlight: Rectangle {
             x: 3
-            width: menuView.width - 6
+            width: listView.width - 6
             height: 20
             radius: 3
             color: "#66666666"
@@ -142,8 +190,8 @@ ShaderEffect {
             clip: true
             Rectangle {
                 x: 0
-                y: menuView.visibleArea.yPosition * parent.height
-                height: menuView.visibleArea.heightRatio * parent.height
+                y: listView.visibleArea.yPosition * parent.height
+                height: listView.visibleArea.heightRatio * parent.height
                 width: parent.width
                 color: "#99999999"
             }

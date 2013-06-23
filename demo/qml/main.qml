@@ -33,77 +33,76 @@ Rectangle {
         }
     }
     Sidebar {
-        id: graphTools
+        id: sidebar
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        selectedIndex: 2
-        model: ListModel {
-            ListElement { caption: "" }
+        selectedIndex: 0
+        actionModel: ListModel {
             ListElement { caption: "Random" }
-            ListElement { caption: "Random/Simple" }
-            ListElement { caption: "Random/Biconnected" }
-            ListElement { caption: "Random/Triconnected" }
-            ListElement { caption: "Random/Tree/N" }
-            ListElement { caption: "Random/Tree/Width" }
-            ListElement { caption: "Random/Hierarchy" }
-            ListElement { caption: "Random/DiGraph" }
-            ListElement { caption: "Layout/Balloon" }
-            ListElement { caption: "Layout/Circular" }
-            ListElement { caption: "Layout/ComponentSplitter" }
-            ListElement { caption: "Layout/DavidsonHarel" }
-            ListElement { caption: "Layout/Dominance" }
-            ListElement { caption: "Layout/FMMM" }
-            ListElement { caption: "Layout/FPP" }
-            ListElement { caption: "Layout/FME" }
-            ListElement { caption: "Layout/FMME" }
-            ListElement { caption: "Layout/GEM" }
-            ListElement { caption: "Layout/MMMExampleFast" }
-            ListElement { caption: "Layout/MMMExampleNice" }
-            ListElement { caption: "Layout/MMMExampleNoTwist" }
-            ListElement { caption: "Layout/MixedForce" }
-            ListElement { caption: "Layout/MixedModel" }
-            ListElement { caption: "Layout/ModularMultilevelMixer" }
-            ListElement { caption: "Layout/Multilevel" }
-            ListElement { caption: "Layout/PlanarDraw" }
-            ListElement { caption: "Layout/PlanarStraight" }
-            ListElement { caption: "Layout/PlanarizationGrid" }
-            ListElement { caption: "Layout/Planarization" }
-            ListElement { caption: "Layout/Preprocessor" }
-            ListElement { caption: "Layout/RadialTree" }
-            ListElement { caption: "Layout/Scaling" }
-            ListElement { caption: "Layout/Schnyder" }
-            ListElement { caption: "Layout/SpringEmbedderFR" }
-            ListElement { caption: "Layout/SpringEmbedderFRExact" }
-            ListElement { caption: "Layout/SpringEmbedderKK" }
-            ListElement { caption: "Layout/StressMajorization" }
-            ListElement { caption: "Layout/Sugiyama" }
-            ListElement { caption: "Layout/Tree" }
-            ListElement { caption: "Layout/Tutte" }
-            ListElement { caption: "Layout/UpwardPlanarization" }
-            ListElement { caption: "Layout/Visibility" }
+            ListElement { caption: "Simple" }
+            ListElement { caption: "Biconnected" }
+            ListElement { caption: "Triconnected" }
+            ListElement { caption: "Tree/N" }
+            ListElement { caption: "Tree/Width" }
+            ListElement { caption: "Hierarchy" }
+            ListElement { caption: "DiGraph" }
             function execute(index) {
-                if (index === 0) {
-                    // X
-                } else if (index - 1 <= 7) {
-                    Controller.random(index - 1);
-                } else {
-                    Controller.layout(index - 8);
-                }
+                Controller.random(index);
             }
         }
+        layoutModel: ListModel {
+            ListElement { caption: "Balloon" }
+            ListElement { caption: "Circular" }
+            ListElement { caption: "ComponentSplitter" }
+            ListElement { caption: "DavidsonHarel" }
+            ListElement { caption: "Dominance" }
+            ListElement { caption: "FMMM" }
+            ListElement { caption: "FPP" }
+            ListElement { caption: "FME" }
+            ListElement { caption: "FMME" }
+            ListElement { caption: "GEM" }
+            ListElement { caption: "MMMExampleFast" }
+            ListElement { caption: "MMMExampleNice" }
+            ListElement { caption: "MMMExampleNoTwist" }
+            ListElement { caption: "MixedForce" }
+            ListElement { caption: "MixedModel" }
+            ListElement { caption: "ModularMultilevelMixer" }
+            ListElement { caption: "Multilevel" }
+            ListElement { caption: "PlanarDraw" }
+            ListElement { caption: "PlanarStraight" }
+            ListElement { caption: "PlanarizationGrid" }
+            ListElement { caption: "Planarization" }
+            ListElement { caption: "Preprocessor" }
+            ListElement { caption: "RadialTree" }
+            ListElement { caption: "Scaling" }
+            ListElement { caption: "Schnyder" }
+            ListElement { caption: "SpringEmbedderFR" }
+            ListElement { caption: "SpringEmbedderFRExact" }
+            ListElement { caption: "SpringEmbedderKK" }
+            ListElement { caption: "StressMajorization" }
+            ListElement { caption: "Sugiyama" }
+            ListElement { caption: "Tree" }
+            ListElement { caption: "Tutte" }
+            ListElement { caption: "UpwardPlanarization" }
+            ListElement { caption: "Visibility" }
+            function execute(index) {
+                Controller.layout(index);
+            }
+        }
+
     }
     Rectangle {
-        id: graphToolsBorder
+        id: sidebarBorder
         width: 1
         anchors.top: parent.top
-        anchors.right: graphTools.left
+        anchors.right: sidebar.left
         anchors.bottom: parent.bottom
         color: "#22231d"
     }
     CanvasView {
         anchors.top: parent.top
-        anchors.right: graphToolsBorder.left
+        anchors.right: sidebarBorder.left
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         clip: true
