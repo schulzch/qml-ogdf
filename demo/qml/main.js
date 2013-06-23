@@ -46,21 +46,6 @@ function random(index) {
     }
 }
 
-function iterate() {
-    consoleView.text = "Iterating " + graph.nodes.count + " nodes:\n  ";
-    for (var i = 0; i < graph.nodes.count; i++) {
-        consoleView.text += " " + graph.nodes.get(i);
-    }
-    consoleView.text += "\n";
-    consoleView.text += "Iterating " + graph.edges.count + " edges:\n  ";
-    for (var i = 0; i < graph.edges.count; i++) {
-        consoleView.text += " " + graph.edges.get(i);
-        consoleView.text += " [" + graph.edges.getSource(i)
-        consoleView.text += " → "+ graph.edges.getTarget(i) + "]\n  ";
-    }
-    consoleView.visible = true;
-}
-
 function layout(index) {
     switch (index) {
     case 0:

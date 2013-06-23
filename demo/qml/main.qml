@@ -39,7 +39,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         selectedIndex: 2
         model: ListModel {
-            ListElement { caption: "Iterate" }
+            ListElement { caption: "" }
             ListElement { caption: "Random" }
             ListElement { caption: "Random/Simple" }
             ListElement { caption: "Random/Biconnected" }
@@ -84,7 +84,7 @@ Rectangle {
             ListElement { caption: "Layout/Visibility" }
             function execute(index) {
                 if (index === 0) {
-                    Controller.iterate();
+                    // X
                 } else if (index - 1 <= 7) {
                     Controller.random(index - 1);
                 } else {
@@ -102,17 +102,19 @@ Rectangle {
         color: "#22231d"
     }
     CanvasView {
-        id: graphView
         anchors.top: parent.top
         anchors.right: graphToolsBorder.left
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         clip: true
         GraphView {
+            property var highlightedNode: null
+            property var highlightedEdge: null
+            id: graphView
             anchors.fill: parent
             model: graph
             edgeDelegate: EdgeSpline {
-                color: "#ffffff"
+                color: model.edge === graphView.highlightedEdge ? "#ff0000" : "#ffffff"
             }
             nodeDelegate: Rectangle {
                 id: rect
@@ -126,7 +128,7 @@ Rectangle {
                     x: 4
                     y: 2
                     font.pixelSize: 12
-                    color: "#ffffff"
+                    color: model.node === graphView.highlightedNode ? "#ff0000" : "#ffffff"
                     text: model.node
                 }
             }
@@ -152,9 +154,28 @@ Rectangle {
             color: "#ffffff"
         }
     }
-    ConsoleView {
-        id: consoleView
-        anchors.fill: parent
-        visible: false
+    Timer {
+        property int nodeIndex: 0
+        property int edgeIndex: 0
+        id: highlightTimer
+        interval: 100
+        repeat: true
+        running: true
+        onTriggered: {
+            if (nodeIndex < graph.nodes.count) {
+                graphView.highlightedNode = graph.nodes.get(nodeIndex);
+                graphView.highlightedEdge = null;
+                nodeIndex++;
+            } else if (edgeIndex < graph.edges.count) {
+                graphView.highlightedNode = null;
+                graphView.highlightedEdge = graph.edges.get(edgeIndex);
+                edgeIndex++;
+            } else {
+                graphView.highlightedNode = null;
+                graphView.highlightedEdge = null;
+                nodeIndex = 0;
+                edgeIndex = 0;
+            }
+        }
     }
 }

@@ -148,14 +148,5 @@ ShaderEffect {
                 color: "#99999999"
             }
         }
-        Timer {
-            id: randomTimer
-            interval: 2000
-            running: false//TODO: enable, when bugs are fixed !menuView.hovering
-            repeat: true
-            onTriggered: {
-                menuView.selectedIndex = Math.round(Math.random() * menuView.model.count);
-            }
-        }
     }
 }

@@ -26,6 +26,8 @@ Canvas {
     width: maxX - minX + headSize + 1
     height: maxY - minY + headSize + 1
     antialiasing: true
+    onHeadSizeChanged: requestPaint()
+    onColorChanged: requestPaint()
     onPaint: {
         var context = getContext('2d');
         // Push.
