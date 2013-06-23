@@ -107,7 +107,6 @@ ShaderEffect {
                     menuView.currentIndex = index;
                 }
                 onExited: {
-
                     menuView.hovering = false;
                 }
             }

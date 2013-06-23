@@ -32,7 +32,7 @@ Rectangle {
             graph.layout.call();
         }
     }
-    GraphTools {
+    Sidebar {
         id: graphTools
         anchors.top: parent.top
         anchors.right: parent.right
@@ -101,13 +101,17 @@ Rectangle {
         anchors.bottom: parent.bottom
         color: "#22231d"
     }
-    GraphView {
+    CanvasView {
         id: graphView
         anchors.top: parent.top
         anchors.right: graphToolsBorder.left
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        graph: graph
+        clip: true
+        GraphView {
+            anchors.fill: parent
+            graph: graph
+        }
     }
     Item {
         id: graphStats

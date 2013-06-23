@@ -1,2 +1,3 @@
 module OGDF
 plugin ogdfplugin
+GraphView 1.0 GraphView.qml

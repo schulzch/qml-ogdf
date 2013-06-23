@@ -8,7 +8,7 @@ project(OGDFPLUGIN)
 file(GLOB_RECURSE OGDF_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     "ogdf/*.cpp" "ogdf/*.h")
 file(GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    "*.cpp" "*.h" "qmldir")
+    "*.cpp" "*.h" "*.qml" "qmldir")
 file(GLOB HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
      "*.h")
 list(REMOVE_ITEM OGDF_SOURCES "ogdf/src/coin/Osi/OsiGrbSolverInterface.cpp")

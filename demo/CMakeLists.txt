@@ -24,5 +24,6 @@ get_filename_component(DEMO_DIR ${DEMO_DIR} PATH)
 add_custom_target(ogdfplugindir ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory "${DEMO_DIR}/OGDF"
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ogdfplugin> "${DEMO_DIR}/OGDF"
+    COMMAND ${CMAKE_COMMAND} -E copy "${OGDFPLUGIN_SOURCE_DIR}/GraphView.qml" "${DEMO_DIR}/OGDF"
     COMMAND ${CMAKE_COMMAND} -E copy "${OGDFPLUGIN_SOURCE_DIR}/qmldir" "${DEMO_DIR}/OGDF")
 add_dependencies(ogdf-demo ogdfplugindir)
