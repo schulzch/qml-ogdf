@@ -33,8 +33,15 @@ Item {
             width: childrenRect.width
             height: childrenRect.height
             Loader {
-                readonly property var model: edgeItem.itemModel
+                property var model: edgeItem.itemModel
                 sourceComponent: root.edgeDelegate
+                Component.onDestruction: {
+                    // XXX: Workaround Components, that get destroyed after the Loader.
+                    model = { edge: "",
+                        source: "", sourceX: 0, sourceY: 0,
+                        target: "", targetX: 0, targetY: 0,
+                        bends: [] };
+                }
             }
         }
     }
@@ -58,9 +65,14 @@ Item {
                 value: nodeItem.height
             }
             Loader {
-                readonly property var model: nodeItem.itemModel
+                property var model: nodeItem.itemModel
                 sourceComponent: root.nodeDelegate
+                Component.onDestruction: {
+                    // XXX: Workaround Components, that get destroyed after the Loader.
+                    model = { node: "", x: 0, y: 0, width: 0, height: 0 };
+                }
             }
         }
+
     }
 }
