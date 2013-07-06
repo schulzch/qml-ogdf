@@ -132,7 +132,11 @@ void EdgeModel::attributesChanged()
 {
     QModelIndex top = createIndex(0, 0);
     QModelIndex bottom = createIndex(count(), 0);
-    emit dataChanged(top, bottom);
+    QVector<int> roles;
+    roles << SourceRole << SourceXRole << SourceYRole
+          << TargetRole <<  TargetXRole << TargetYRole
+          << BendsRole;
+    emit dataChanged(top, bottom, roles);
 }
 
 int EdgeModel::count() const

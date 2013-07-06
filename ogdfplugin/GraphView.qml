@@ -24,7 +24,7 @@ Item {
     width: childrenRect.width
     height: childrenRect.height
     Repeater {
-        model: root.model.edges
+        model: root.model === null ? null : root.model.edges
         delegate: Item {
             readonly property var itemModel: model
             id: edgeItem
@@ -46,7 +46,7 @@ Item {
         }
     }
     Repeater {
-        model: root.model.nodes
+        model: root.model === null ? null : root.model.nodes
         delegate: Item {
             readonly property var itemModel: model
             id: nodeItem
@@ -73,6 +73,5 @@ Item {
                 }
             }
         }
-
     }
 }

@@ -85,7 +85,9 @@ bool NodeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     default:
         return false;
     }
-    emit dataChanged(index, index);
+    QVector<int> roles;
+    roles << XRole << YRole << WidthRole << HeightRole;
+    emit dataChanged(index, index, roles);
     m_graph->layout()->invalidate();
     return true;
 }
@@ -143,7 +145,9 @@ void NodeModel::attributesChanged()
 {
     QModelIndex top = createIndex(0, 0);
     QModelIndex bottom = createIndex(count(), 0);
-    emit dataChanged(top, bottom);
+    QVector<int> roles;
+    roles << XRole << YRole << WidthRole << HeightRole;
+    emit dataChanged(top, bottom, roles);
 }
 
 int NodeModel::count() const
