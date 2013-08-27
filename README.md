@@ -2,7 +2,7 @@
 
 This plug-in provides a binding of [Open Graph Drawing Framework](http://www.ogdf.net) to [QtQML](http://qt-project.org/doc/qt-5.0/qtqml/qtqml-index.html) (Version 5.0+).
 
-*Note: it's is quite useable, but far from mature (read: APIs may change)!*
+The Open Graph Drawing Framework offers sophisticated algorithms and data structures for the automatic layout of diagrams. Some parts of OGDF are experimental and unstable, so don't expect all algorithms to work equally well.
 
 ## Features
 
